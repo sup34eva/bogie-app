@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "560563572238",
+    "project_id": "bogie-1278"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560563572238:android:c1a0dacb63a2c3e7",
+        "android_client_info": {
+          "package_name": "com.bogie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "560563572238-3g21a9904mbmaivhbn6gs6omaj9507mh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bogie",
+            "certificate_hash": "EC59FD09AB45D4D8FBBCF32D32BA314574642270"
+          }
+        },
+        {
+          "client_id": "560563572238-0r0uacv3kh94sl6n6nnibsk85bf097ej.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvYv7Aodo5DvYqkp8cjciXsYfaLylAaLs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

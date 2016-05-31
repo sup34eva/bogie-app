@@ -1,0 +1,15 @@
+machine:
+    node:
+        version: 5.9.0
+dependencies:
+    pre:
+    - chmod +x android/gradlew
+    - chmod +x scripts/cdn.sh
+    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
+    post:
+    - gulp client assets
+deployment:
+    aws:
+        branch: master
+        commands:
+        - ./scripts/cdn.sh
