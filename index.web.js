@@ -26,7 +26,7 @@ function renderApp(routes) {
         history: browserHistory
     }, async (error, redirectLocation, renderProps) => {
         const environment = new Relay.Environment();
-        environment.injectNetworkLayer(new Relay.DefaultNetworkLayer(`http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/graphql`));
+        environment.injectNetworkLayer(new Relay.DefaultNetworkLayer('/graphql'));
 
         const data = JSON.parse(document.getElementById('preloadedData').textContent);
         IsomorphicRelay.injectPreparedData(environment, data);

@@ -6,6 +6,11 @@ import bodyParser from 'body-parser';
 
 import './patchRequire';
 import relay from './relay';
+import {
+    popup,
+    complete,
+    cancel
+} from './payment';
 
 const app = express();
 
@@ -16,6 +21,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use(cookieParser());
 
+app.use('/payment/popup', popup);
+app.use('/payment/complete', complete);
+app.use('/payment/cancel', cancel);
 app.get('*', relay);
 
 app.use(bodyParser.json());
