@@ -138,7 +138,7 @@ export default class LoginForm extends React.Component {
                         <Button style={styles.button} onPress={this.onSubmit}>
                             <Text style={Button.Text}>Log In</Text>
                         </Button>
-                        <FacebookLogin style={styles.button} appId={process.env.FB_ID} callback={this.onFacebook} />
+                            <FacebookLogin style={styles.button} appId={process.env.FB_ID} callback={this.onFacebook} />
                         <GoogleLogin style={styles.button} clientId={process.env.GOOGLE_ID} callback={this.onGoogle} />
                     </View>
                 )}

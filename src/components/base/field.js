@@ -13,13 +13,13 @@ const styles = StyleSheet.create({
 
 export default class Field extends React.Component {
     static propTypes = {
-        name: React.PropType.string,
-        style: View.propType.style,
-        children: React.PropType.node,
-        type: React.PropType.oneOf(['text', 'password', 'email']),
-        valueLink: React.PropType.shape({
-            value: React.PropType.string,
-            requestChange: React.PropType.func
+        name: React.PropTypes.string,
+        style: View.propTypes.style,
+        children: React.PropTypes.node,
+        type: React.PropTypes.oneOf(['text', 'password', 'email']),
+        valueLink: React.PropTypes.shape({
+            value: React.PropTypes.string,
+            requestChange: React.PropTypes.func
         })
     }
     render() {

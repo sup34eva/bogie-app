@@ -15,6 +15,7 @@ import TrainList from './components/trainList';
 import ConnectionPage from './components/connectionPage';
 import LoginForm from './components/loginForm';
 import RegisterForm from './components/registerForm';
+import About from './components/about';
 
 const rootQuery = {
     viewer: () => Relay.QL`
@@ -51,6 +52,7 @@ export default createRoutes(
                 <Route path="/login" title="Login" component={LoginForm} />
                 <Route path="/register" title="Register" component={RegisterForm} queries={rootQuery} />
             </Route>
+            <Route path="/about" title="About" component={About} />
             <Route path="/logout" onEnter={({location}, replace) => {
                 cookie.remove('token');
                 replace('/login');
