@@ -14,39 +14,79 @@ const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${pr
 
 const styles = StyleSheet.create({
     topBar: {
-        padding: '1.25em',
-        height: '3.25em',
         flexDirection: 'row',
-        alignSelf: 'center'
+        justifyContent: 'center',
+        boxShadow: '0 -1em 1em 1em rgba(0, 0, 0, 0.5)'
     },
-    p: {
-        flex: 1
+    barLink: {
+        padding: '1.25em',
+        fontSize: '1.2em',
+        color: 'rgba(0, 0, 0, 0.4)',
+        textDecorationLine: 'none'
+    },
+    linkActive: {
+        position: 'relative',
+        color: '#a85342'
+    },
+    indicator: {
+        position: 'absolute',
+        bottom: '-0.5em',
+        left: '50%',
+        borderStyle: 'solid',
+        borderWidth: '0.5em',
+        borderColor: 'transparent',
+        borderTopColor: 'white',
+        borderBottomWidth: 0,
+        transform: [{
+            translateX: '-50%'
+        }]
     }
 });
 
-/* active:{
-    ':after':{
-        content: '',
-        position: 'absolute',
-        top: '3.25em',
-        marginLeft: '-2em',
-        borderLeft: '1em solid transparent',
-        borderRight: '1em solid transparent',
-        borderTop: '1em solid white',
-    }
-}*/
+const barLinks = [{
+    name: 'Home',
+    to: '/'
+}, {
+    name: 'Profile',
+    to: '/profile',
+    logged: true
+}, {
+    name: 'Logout',
+    to: '/logout',
+    logged: true
+}, {
+    name: 'Login',
+    to: '/login',
+    logged: false
+}, {
+    name: 'register',
+    to: '/Register',
+    logged: false
+}];
 
-function TopBar() {
+function TopBar({activeRoute}) {
+    const hasToken = Boolean(cookie.load('token'));
+    const spanStyle = StyleSheet.resolve({
+        style: styles.indicator
+    });
+
     return (
         <View style={styles.topBar}>
-            <Link to="/" style={styles.p}>Home</Link>
-            {cookie.load('token') ? [
-                <Link key="profile" to="/profile" style={styles.p}>Profile</Link>,
-                <Link key="logout" to="/logout" style={styles.p}>Logout</Link>
-            ] : [
-                <Link key="login" to="/login" style={styles.p}>Login</Link>,
-                <Link key="register" to="/register" style={styles.p}>Register</Link>
-            ]}
+            {barLinks.filter(({logged}) =>
+                (logged === true && hasToken) || (logged === false && !hasToken) || logged === undefined
+            ).map(({name, to}) => {
+                const isActive = to === activeRoute.path;
+                const linkStyle = StyleSheet.resolve({
+                    style: [styles.barLink, isActive && styles.linkActive]
+                });
+
+                return (
+                    <Link key={name} to={to} {...linkStyle}>
+                        {name}
+                        {isActive && <span {...spanStyle} />}
+                    </Link>
+                );
+            })}
         </View>
     );
 }
