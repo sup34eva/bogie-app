@@ -7,7 +7,6 @@ import {
 } from 'react-native';
 
 import Field from './base/field';
-import TopBar from './topBar';
 
 const styles = StyleSheet.create({
     container: {
@@ -86,21 +85,18 @@ export default class Home extends React.Component {
         const hoursTo = this.state.range[1] * 15;
 
         return (
-            <View>
-                <TopBar />
-                <View style={styles.container}>
-                    <View style={styles.row}>
-                        <Field style={styles.input} name="Departure" valueLink={departureLink}/>
-                        <Field style={styles.input} name="Arrival" valueLink={arrivalLink}/>
-                    </View>
-                    <View style={styles.row}>
-                        <Field style={[styles.input, styles.date]} name="Date" valueLink={dateLink}/>
-                        <View style={styles.range}>
-                            <Text>{Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
-                            <Slider onChange={rangeLink.requestChange} value={rangeLink.value} max={96} withBars
-                                className={rangeStyle.className} barClassName="bar"
-                                handleClassName={handleStyle.className} />
-                        </View>
+            <View style={styles.container}>
+                <View style={styles.row}>
+                    <Field style={styles.input} name="Departure" valueLink={departureLink}/>
+                    <Field style={styles.input} name="Arrival" valueLink={arrivalLink}/>
+                </View>
+                <View style={styles.row}>
+                    <Field style={[styles.input, styles.date]} name="Date" valueLink={dateLink}/>
+                    <View style={styles.range}>
+                        <Text>{Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
+                        <Slider onChange={rangeLink.requestChange} value={rangeLink.value} max={96} withBars
+                            className={rangeStyle.className} barClassName="bar"
+                            handleClassName={handleStyle.className} />
                     </View>
                 </View>
             </View>

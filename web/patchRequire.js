@@ -12,7 +12,7 @@ Module.prototype.require = function (fileName) {
     } catch (e) {
         try {
             return originalRequire.call(this, fileName);
-        } catch(err) {
+        } catch (err) {
             console.error(e.message);
             throw err;
         }

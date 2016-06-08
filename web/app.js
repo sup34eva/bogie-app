@@ -1,13 +1,55 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import cookie from 'react-cookie';
 import {
+    View,
     StyleSheet
 } from 'react-native';
 import {
+    Link,
     routerShape
 } from 'react-router';
 
 const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
+
+const styles = StyleSheet.create({
+    topBar: {
+        padding: '1.25em',
+        height: '3.25em',
+        flexDirection: 'row',
+        alignSelf: 'center'
+    },
+    p: {
+        flex: 1
+    }
+});
+
+/* active:{
+    ':after':{
+        content: '',
+        position: 'absolute',
+        top: '3.25em',
+        marginLeft: '-2em',
+        borderLeft: '1em solid transparent',
+        borderRight: '1em solid transparent',
+        borderTop: '1em solid white',
+    }
+}*/
+
+function TopBar() {
+    return (
+        <View style={styles.topBar}>
+            <Link to="/" style={styles.p}>Home</Link>
+            {cookie.load('token') ? [
+                <Link key="profile" to="/profile" style={styles.p}>Profile</Link>,
+                <Link key="logout" to="/logout" style={styles.p}>Logout</Link>
+            ] : [
+                <Link key="login" to="/login" style={styles.p}>Login</Link>,
+                <Link key="register" to="/register" style={styles.p}>Register</Link>
+            ]}
+        </View>
+    );
+}
 
 export default class App extends React.Component {
     static propTypes = {
@@ -34,10 +76,10 @@ export default class App extends React.Component {
         }
 
         const activeRoute = this.props.routes
-            .reduce(function flatMap(list, {path, title, indexRoute, childRoutes}) {
+            .reduce(function flatMap(list, {path, title, indexRoute, childRoutes, hideNavigation}) {
                 if (path && title) {
                     list.push({
-                        path, title
+                        path, title, hideNavigation
                     });
                 }
 
@@ -95,7 +137,7 @@ export default class App extends React.Component {
                             height: 10px;
                         }
                         .bar-1 {
-                            margin: 0 5px;
+                            margin: 0 20px;
                             background-color: rgba(0, 0, 0, 0.5);
                         }
                     `
@@ -103,6 +145,7 @@ export default class App extends React.Component {
                     id: StyleSheet.elementId,
                     cssText: StyleSheet.renderToString()
                 }]} script={scripts} />
+                {activeRoute && activeRoute.hideNavigation !== true && <TopBar activeRoute={activeRoute} />}
                 {this.props.children}
             </div>
         );

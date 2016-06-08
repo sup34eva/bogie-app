@@ -11,7 +11,7 @@ import {
 } from 'react-router';
 
 import App from './app';
-import Home from './components/home'
+import Home from './components/home';
 import TrainList from './components/trainList';
 import ConnectionPage from './components/connectionPage';
 import LoginForm from './components/loginForm';
@@ -50,8 +50,8 @@ export default createRoutes(
         <Route path="/" component={App}>
             <IndexRoute title="Home" component={Home}/>
             <Route component={ConnectionPage}>
-                <Route path="/login" title="Login" component={LoginForm} />
-                <Route path="/register" title="Register" component={RegisterForm} queries={rootQuery} />
+                <Route path="/login" title="Login" hideNavigation component={LoginForm} />
+                <Route path="/register" title="Register" hideNavigation component={RegisterForm} queries={rootQuery} />
             </Route>
             <Route path="/about" title="About" component={About} />
             <Route path="/trains" title="Trains List" onEnter={ensureLogin} component={TrainList} prepareParams={prepareToken} queries={tokenQuery}/>

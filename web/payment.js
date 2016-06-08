@@ -45,6 +45,6 @@ export function complete(req, res) {
     });
 }
 
-export function cancel(req, res) {
+export function cancel() {
     // TODO: Close popup
 }
