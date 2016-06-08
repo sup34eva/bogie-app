@@ -12,9 +12,7 @@ export default class RegisterMutation extends Relay.Mutation {
     getVariables() {
         return {
             username: this.props.username,
-            password: this.props.password,
-            clientId: 'f7eaa832-c154-4436-866b-8331e93b0377',
-            clientSecret: 'victoria'
+            password: this.props.password
         };
     }
 

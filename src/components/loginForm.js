@@ -135,7 +135,7 @@ export default class LoginForm extends React.Component {
                 {Boolean(this.state.error) && <Text style={styles.red}>{this.state.error}</Text>}
                 {this.state.isLoading ? <ActivityIndicator /> : (
                     <View style={styles.buttons}>
-                        <Button style={styles.button} onTouch={this.onSubmit}>
+                        <Button style={styles.button} onPress={this.onSubmit}>
                             <Text style={Button.Text}>Log In</Text>
                         </Button>
                             <FacebookLogin style={styles.button} appId={process.env.FB_ID} callback={this.onFacebook} />

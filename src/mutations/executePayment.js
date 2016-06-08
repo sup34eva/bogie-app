@@ -1,26 +1,27 @@
 import Relay from 'react-relay';
 
-export default class GrantPasswordMutation extends Relay.Mutation {
+export default class ExecutePaymentMutation extends Relay.Mutation {
     getMutation() {
         return Relay.QL`
             mutation {
-                grantPassword
+                executePayment
             }
         `;
     }
 
     getVariables() {
         return {
-            username: this.props.username,
-            password: this.props.password,
-            scope: 'query mutation'
+            payment: this.props.payment,
+            payer: this.props.payer,
+            clientId: this.props.clientId,
+            clientSecret: this.props.clientSecret
         };
     }
 
     getFatQuery() {
         return Relay.QL`
-            fragment on GrantPasswordPayload {
-                token
+            fragment on ExecutePaymentPayload {
+                payment
             }
         `;
     }
@@ -30,8 +31,8 @@ export default class GrantPasswordMutation extends Relay.Mutation {
             type: 'REQUIRED_CHILDREN',
             children: [
                 Relay.QL`
-                    fragment on GrantPasswordPayload {
-                        token
+                    fragment on ExecutePaymentPayload {
+                        payment
                     }
                 `
             ]

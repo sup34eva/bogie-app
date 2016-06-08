@@ -1,6 +1,8 @@
 'use strict';
 
 const path = require('path');
+const util = require('util');
+const Transform = require('stream').Transform;
 const childProcess = require('child_process');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
@@ -11,7 +13,6 @@ const gutil = require('gulp-util');
 const changed = require('gulp-changed');
 const babel = require('gulp-babel');
 const browserSync = require('browser-sync');
-const prefix = require('prefix-stream');
 const piping = require('piping');
 
 const productionAssets = !!process.env.CIRCLE_ARTIFACTS;
@@ -138,6 +139,7 @@ gulp.task('server', ['babel'], () => {
     piping({
         main: 'dist/server.js',
         hook: true,
+        throw: false,
         env: Object.assign({
             PORT: 5000
         }, env)
@@ -177,6 +179,29 @@ gulp.task('cdn', ['assets', 'server'], () => {
     });
 });
 
+class PrefixStream extends Transform {
+    constructor(options) {
+        if (typeof options === 'string') {
+            options = {
+                prefix: options
+            };
+        }
+
+        options.decodeStrings = false;
+        super(options);
+
+        this.prefix = options.prefix;
+    }
+
+    _transform(chunk, encoding, done) {
+        done(null, chunk.toString()
+            .split(/\n+/)
+            .map(line => `[${this.prefix}] ${line}`)
+            .join('\n') + '\n'
+        );
+    }
+}
+
 gulp.task('assemble:release', done => {
     const proc = childProcess.exec(`${path.resolve(__dirname, 'android/gradlew')} assembleRelease`, {
         cwd: path.resolve(__dirname, 'android')
@@ -186,10 +211,10 @@ gulp.task('assemble:release', done => {
     });
 
     proc.stdout
-        .pipe(prefix('assemble:release: '))
+        .pipe(new PrefixStream('assemble:release'))
         .pipe(process.stdout);
     proc.stderr
-        .pipe(prefix('assemble:release: '))
+        .pipe(new PrefixStream('assemble:release'))
         .pipe(process.stderr);
 });
 
@@ -200,10 +225,10 @@ gulp.task('run:android', done => {
     });
 
     proc.stdout
-        .pipe(prefix('run:android: '))
+        .pipe(new PrefixStream('run:android'))
         .pipe(process.stdout);
     proc.stderr
-        .pipe(prefix('run:android: '))
+        .pipe(new PrefixStream('run:android'))
         .pipe(process.stderr);
 });
 
@@ -214,10 +239,10 @@ gulp.task('mobile:start', done => {
     });
 
     proc.stdout
-        .pipe(prefix('mobile:start: '))
+        .pipe(new PrefixStream('mobile:start'))
         .pipe(process.stdout);
     proc.stderr
-        .pipe(prefix('mobile:start: '))
+        .pipe(new PrefixStream('mobile:start'))
         .pipe(process.stderr);
 });
 

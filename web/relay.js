@@ -20,6 +20,7 @@ import cookie from 'react-cookie';
 import routes from './router';
 
 const networkLayer = new Relay.DefaultNetworkLayer(`http://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/graphql`);
+Relay.injectNetworkLayer(networkLayer);
 
 export default (req, res) => {
     cookie.plugToRequest(req, res);

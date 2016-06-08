@@ -157,7 +157,7 @@ class RegisterForm extends React.Component {
                 </Field>
                 <Field style={styles.input} type="password" name="Password Confirmation" valueLink={passwordConfLink} />
                 {this.state.isLoading ? <ActivityIndicator /> : (
-                    <Button onTouch={this.register} disabled={isDisabled}>
+                    <Button onPress={this.register} disabled={isDisabled}>
                         <Text style={Button.Text}>Register</Text>
                     </Button>
                 )}
@@ -194,7 +194,7 @@ class FormHolder extends React.Component {
                 renderFailure={(error, retry) => (
                     <View style={this.props.style}>
                         <Text>{error.message}</Text>
-                        <Button onTouch={retry}>
+                        <Button onPress={retry}>
                             <Text style={Button.Text}>Retry</Text>
                         </Button>
                     </View>
