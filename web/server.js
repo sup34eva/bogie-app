@@ -21,9 +21,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use(cookieParser());
 
-app.use('/payment/popup', popup);
-app.use('/payment/complete', complete);
-app.use('/payment/cancel', cancel);
+app.get('/payment/popup', popup);
+app.get('/payment/complete', complete);
+app.get('/payment/cancel', cancel);
 app.get('*', relay);
 
 app.use(bodyParser.json());

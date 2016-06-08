@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.react.ReactActivity;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.google.android.gms.auth.api.Auth;
@@ -49,8 +50,9 @@ public class MainActivity extends ReactActivity {
             callbackManager = CallbackManager.Factory.create();
         }
 
-        return Arrays.asList(
+        return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new VectorIconsPackage(),
             new BogiePackage(this)
         );
     }
