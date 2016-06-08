@@ -11,10 +11,12 @@ import {
 } from 'react-router';
 
 import App from './app';
+import Home from './components/home'
 import TrainList from './components/trainList';
 import ConnectionPage from './components/connectionPage';
 import LoginForm from './components/loginForm';
 import RegisterForm from './components/registerForm';
+import About from './components/about';
 
 const rootQuery = {
     viewer: () => Relay.QL`
@@ -46,11 +48,13 @@ const tokenQuery = {
 export default createRoutes(
     <RelayRouter>
         <Route path="/" component={App}>
-            <IndexRoute title="Trains List" onEnter={ensureLogin} component={TrainList} prepareParams={prepareToken} queries={tokenQuery} />
+            <IndexRoute title="Home" component={Home}/>
             <Route component={ConnectionPage}>
                 <Route path="/login" title="Login" component={LoginForm} />
                 <Route path="/register" title="Register" component={RegisterForm} queries={rootQuery} />
             </Route>
+            <Route path="/about" title="About" component={About} />
+            <Route path="/trains" title="Trains List" onEnter={ensureLogin} component={TrainList} prepareParams={prepareToken} queries={tokenQuery}/>
             <Route path="/logout" onEnter={({location}, replace) => {
                 cookie.remove('token');
                 replace('/login');

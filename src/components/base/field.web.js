@@ -47,7 +47,7 @@ export default class Field extends React.Component {
         name: React.PropTypes.string,
         style: View.propTypes.style,
         inputStyle: View.propTypes.style,
-        type: React.PropTypes.oneOf(['text', 'password']),
+        type: React.PropTypes.oneOf(['text', 'password', 'email']),
         children: React.PropTypes.node,
         valueLink: React.PropTypes.shape({
             value: React.PropTypes.string,
@@ -67,6 +67,7 @@ export default class Field extends React.Component {
             <View component="label" style={classes}>
                 <Text style={styles.label}>{this.props.name}</Text>
                 <TextInput style={[this.props.inputStyle, styles.input]}
+                    keyboardType={this.props.type === 'email' ? 'email-address' : undefined}
                     secureTextEntry={this.props.type === 'password'} placeholder={this.props.name}
                     value={value} onChangeText={requestChange} />
                 {this.props.children}

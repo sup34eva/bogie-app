@@ -55,7 +55,7 @@ export default class LoginForm extends React.Component {
         this.state = {
             error: null,
             isLoading: false,
-            username: '',
+            email: '',
             password: ''
         };
     }
@@ -105,17 +105,17 @@ export default class LoginForm extends React.Component {
 
     onSubmit() {
         Relay.Store.commitUpdate(new GrantPasswordMutation({
-            username: this.state.username,
+            email: this.state.email,
             password: this.state.password
         }), this.onToken());
     }
 
     render() {
-        const usernameLink = {
-            value: this.state.username,
-            requestChange: username => {
+        const emailLink = {
+            value: this.state.email,
+            requestChange: email => {
                 this.setState({
-                    username
+                    email
                 });
             }
         };
@@ -130,7 +130,7 @@ export default class LoginForm extends React.Component {
 
         return (
             <View style={[styles.form, this.props.style]}>
-                <Field name="Username" valueLink={usernameLink} />
+                <Field type="email" name="Email" valueLink={emailLink} />
                 <Field type="password" name="Password" valueLink={passwordLink} />
                 {Boolean(this.state.error) && <Text style={styles.red}>{this.state.error}</Text>}
                 {this.state.isLoading ? <ActivityIndicator /> : (
