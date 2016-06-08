@@ -11,7 +11,7 @@ export default class GrantPasswordMutation extends Relay.Mutation {
 
     getVariables() {
         return {
-            username: this.props.username,
+            email: this.props.email,
             password: this.props.password,
             scope: 'query mutation'
         };

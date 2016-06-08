@@ -46,7 +46,7 @@ class RegisterForm extends React.Component {
         this.state = {
             isLoading: false,
 
-            username: '',
+            email: '',
             password: '',
             passwordConfirmation: '',
 
@@ -57,19 +57,22 @@ class RegisterForm extends React.Component {
     }
 
     register() {
-        const {username, password} = this.state;
+        const {email, password} = this.state;
 
         this.setState({
             isLoading: true
         });
 
         Relay.Store.commitUpdate(new RegisterMutation({
-            username, password
+            email, password
         }), {
             onSuccess: () => {
-                ToastAndroid.show('Votre compte a ete cree', ToastAndroid.SHORT);
+                if (Platform.OS === 'android') {
+                    ToastAndroid.show('Votre compte a ete cree', ToastAndroid.SHORT);
+                }
+
                 Relay.Store.commitUpdate(new LoginMutation({
-                    username, password
+                    email, password
                 }), {
                     onSuccess: response => {
                         const key = Object.keys(response).find(key => key.startsWith('grant'));
@@ -83,12 +86,8 @@ class RegisterForm extends React.Component {
                         }
                     },
                     onFailure: transaction => {
-                        const response = transaction.getError();
-                        response.json().then(({errors}) => {
-                            errors.forEach(err => {
-                                console.warn(err.message);
-                            });
-                        });
+                        const err = transaction.getError();
+                        console.warn(err.message);
 
                         this.setState({
                             isLoading: false
@@ -97,12 +96,8 @@ class RegisterForm extends React.Component {
                 });
             },
             onFailure: transaction => {
-                const response = transaction.getError();
-                response.json().then(({errors}) => {
-                    errors.forEach(err => {
-                        console.warn(err.message);
-                    });
-                });
+                const err = transaction.getError();
+                console.warn(err.message);
 
                 this.setState({
                     isLoading: false
@@ -112,18 +107,18 @@ class RegisterForm extends React.Component {
     }
 
     render() {
-        const usernameLink = {
-            value: this.state.username,
-            requestChange: username => {
-                this.setState({username});
-                this.props.relay.setVariables({username});
+        const emailLink = {
+            value: this.state.email,
+            requestChange: email => {
+                this.setState({email});
+                this.props.relay.setVariables({email});
             }
         };
         const passwordLink = {
             value: this.state.password,
             requestChange: password => {
                 const {score, feedback: {warning, suggestions}} = zxcvbn(password, [
-                    this.state.username
+                    this.state.email
                 ]);
                 this.setState({
                     password,
@@ -140,14 +135,14 @@ class RegisterForm extends React.Component {
 
         const isDisabled = this.state.score === 0 ||
             this.state.password !== this.state.passwordConfirmation ||
-            this.state.username.length === 0 ||
+            this.state.email.length === 0 ||
             this.props.viewer.user !== null ||
             this.props.relay.hasPartialData(this.props.viewer);
 
         return (
             <View style={[styles.form, this.props.style]}>
-                <Field name="Username" valueLink={usernameLink}>
-                    {this.props.viewer.user !== null && <Text style={styles.red}>This username is already taken</Text>}
+                <Field type="email" name="Email" valueLink={emailLink}>
+                    {this.props.viewer.user !== undefined && this.props.viewer.user !== null && <Text style={styles.red}>This email is already used</Text>}
                 </Field>
                 <Field type="password" name="Password" valueLink={passwordLink}>
                     <View style={styles.list}>
@@ -168,12 +163,12 @@ class RegisterForm extends React.Component {
 
 const RelayContainer = Relay.createContainer(RegisterForm, {
     initialVariables: {
-        username: ''
+        email: ''
     },
     fragments: {
         viewer: () => Relay.QL`
             fragment on Viewer {
-                user(name: $username) {
+                user(email: $email) {
                     id
                 }
             }

@@ -16,7 +16,7 @@ export default class Field extends React.Component {
         name: React.PropType.string,
         style: View.propType.style,
         children: React.PropType.node,
-        type: React.PropType.oneOf(['text', 'password']),
+        type: React.PropType.oneOf(['text', 'password', 'email']),
         valueLink: React.PropType.shape({
             value: React.PropType.string,
             requestChange: React.PropType.func
@@ -26,6 +26,7 @@ export default class Field extends React.Component {
         const {value, requestChange} = this.props.valueLink;
         const inputProps = {
             ...this.props,
+            keyboardType: this.props.type === 'email' ? 'email-address' : undefined,
             secureTextEntry: this.props.type === 'password',
             placeholder: this.props.name,
             style: styles.input,
