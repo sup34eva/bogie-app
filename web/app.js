@@ -89,6 +89,15 @@ export default class App extends React.Component {
                         *:before {
                             box-sizing: inherit;
                         }
+
+                        .bar {
+                            top: 15px;
+                            height: 10px;
+                        }
+                        .bar-1 {
+                            margin: 0 5px;
+                            background-color: rgba(0, 0, 0, 0.5);
+                        }
                     `
                 }, {
                     id: StyleSheet.elementId,

@@ -141,6 +141,8 @@ gulp.task('server', ['babel'], () => {
         hook: true,
         throw: false,
         env: Object.assign({
+            CLIENT_ID: 'fe0a8abb-8802-4ac0-9492-d5bcfbe072fe',
+            CLIENT_SECRET: 'MQMm7jVTpuef8qEb',
             PORT: 5000
         }, env)
     });
