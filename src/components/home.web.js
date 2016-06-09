@@ -11,6 +11,7 @@ import {
 import {
     styles as fieldStyles
 } from './base/field';
+import Travel from './travel';
 import Button from './base/button';
 import Slider from './base/slider';
 import AutoCompleteField from './base/autoComplete';
@@ -51,16 +52,18 @@ class Home extends React.Component {
 
     constructor(props) {
         super(props);
+        this.onSubmit = this.onSubmit.bind(this);
         this.state = {
-            submit: false,
+            departure: '',
+            arrival: '',
             date: moment()
         };
-        this.onSubmit = this.onSubmit.bind(this);
     }
 
     onSubmit() {
-        this.setState({
-            submit: true
+        this.props.relay.setVariables({
+            departure: this.state.departure,
+            arrival: this.state.arrival
         });
     }
 
@@ -72,15 +75,15 @@ class Home extends React.Component {
             }
         };
         const departureLink = {
-            value: this.props.relay.variables.departure,
+            value: this.state.departure,
             requestChange: departure => {
-                this.props.relay.setVariables({departure});
+                this.setState({departure});
             }
         };
         const arrivalLink = {
-            value: this.props.relay.variables.arrival,
+            value: this.state.arrival,
             requestChange: arrival => {
-                this.props.relay.setVariables({arrival});
+                this.setState({arrival});
             }
         };
 
@@ -88,8 +91,8 @@ class Home extends React.Component {
             <View>
                 <View style={styles.container}>
                     <View style={styles.row}>
-                        <AutoCompleteField name="Departure" valueLink={departureLink} data={this.props.viewer.departures.edges} />
-                        <AutoCompleteField name="Arrival" valueLink={arrivalLink} data={this.props.viewer.arrivals.edges} />
+                        <AutoCompleteField name="Departure" valueLink={departureLink} viewer={this.props.viewer} />
+                        <AutoCompleteField name="Arrival" valueLink={arrivalLink} viewer={this.props.viewer} />
                     </View>
                     <View style={styles.row}>
                         <View style={styles.date}>
@@ -104,11 +107,7 @@ class Home extends React.Component {
                         </Button>
                     </View>
                 </View>
-                {this.props.viewer.results.edges.length === 0 || this.state.submit === false ? null :
-                    <View style={styles.container}>
-                        <Text style={fieldStyles.label}>Test</Text>
-                    </View>
-                }
+                <Travel departure={this.props.relay.variables.departure} arrival={this.props.relay.variables.arrival} viewer={this.props.viewer} />
             </View>
         );
     }
@@ -120,32 +119,14 @@ export default Relay.createContainer(Home, {
         arrival: ''
     },
     fragments: {
-        viewer: () => Relay.QL`
+        viewer: variables => Relay.QL`
             fragment on Viewer {
-                departures: stations(filter: $departure, first: 5) {
-                    edges {
-                        node {
-                            id
-                            name
-                        }
-                    }
-                }
-                arrivals: stations(filter: $arrival, first: 5) {
-                    edges {
-                        node {
-                            id
-                            name
-                        }
-                    }
-                }
-                results: route(from: $departure, to: $arrival, first: 1){
-                    edges {
-                        node {
-                            id
-                            name
-                        }
-                    }
-                }
+                ${AutoCompleteField.getFragment('viewer')}
+                ${AutoCompleteField.getFragment('viewer')}
+                ${Travel.getFragment('viewer', {
+                    departure: variables.departure,
+                    arrival: variables.arrival
+                })}
             }
         `
     }

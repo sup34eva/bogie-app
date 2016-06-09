@@ -1,4 +1,5 @@
 import React from 'react';
+import Relay from 'react-relay';
 import Autosuggest from 'react-autosuggest';
 import {
     styles as fieldStyles
@@ -15,10 +16,11 @@ const styles = StyleSheet.create({
     }
 });
 
-export default class AutoCompleteField extends React.Component {
+class AutoCompleteField extends React.Component {
     static propTypes = {
-        data: React.PropTypes.array,
         name: React.PropTypes.string,
+        viewer: React.PropTypes.object,
+        relay: React.PropTypes.object,
         valueLink: React.PropTypes.shape({
             value: React.PropTypes.string,
             requestChange: React.PropTypes.func
@@ -36,7 +38,7 @@ export default class AutoCompleteField extends React.Component {
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
 
-        return inputLength === 0 ? [] : this.props.data.filter(({node}) => {
+        return inputLength === 0 ? [] : this.props.viewer.stations.edges.filter(({node}) => {
             return node.name.toLowerCase().slice(0, inputLength) === inputValue;
         });
     }
@@ -62,6 +64,9 @@ export default class AutoCompleteField extends React.Component {
                         placeholder: this.props.name,
                         value: this.props.valueLink.value,
                         onChange: (evt, {newValue}) => {
+                            this.props.relay.setVariables({
+                                filter: newValue
+                            });
                             this.props.valueLink.requestChange(newValue);
                         }
                     }} />
@@ -69,3 +74,23 @@ export default class AutoCompleteField extends React.Component {
         );
     }
 }
+
+export default Relay.createContainer(AutoCompleteField, {
+    initialVariables: {
+        filter: ''
+    },
+    fragments: {
+        viewer: () => Relay.QL`
+            fragment on Viewer {
+                stations(filter: $filter, first: 5) {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        `
+    }
+});
