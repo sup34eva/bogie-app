@@ -4,6 +4,7 @@ import {
     View,
     Text
 } from 'react-native';
+import Card from './base/card';
 
 const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
 
@@ -11,14 +12,14 @@ const styles = StyleSheet.create({
     container: {
         alignSelf: 'center',
         width: 1080,
-        backgroundColor: 'rgba(255,255,255,0.7)',
-        paddingTop: 0,
-        padding: 45,
         marginTop: 45
     },
     title: {
         fontWeight: 'bold',
         marginTop: 45
+    },
+    first: {
+        marginTop: 0
     },
     about: {
         backgroundSize: 'cover',
@@ -36,8 +37,8 @@ export default class about extends React.Component {
     render() {
         return (
             <View style={styles.about}>
-                <View style={styles.container}>
-                    <Text style={styles.title}>Qui sommes-nous ?</Text>
+                <Card style={styles.container}>
+                    <Text style={[styles.title, styles.first]}>Qui sommes-nous ?</Text>
                     <Text>
                         Nous sommes 4 étudiants en 3ème année d’école ingénieur informatique.
                         Nous possédons grâce à notre cursus de multiple connaissance sur les nouvelles technologies.
@@ -56,7 +57,7 @@ export default class about extends React.Component {
                         Nous sommes à votre disposition à cette adresse mail : contact@bogie.leops.me.
                         Pour toutes questions ou remarques, n’hésitez pas.
                     </Text>
-                </View>
+                </Card>
             </View>
         );
     }

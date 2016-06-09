@@ -17,6 +17,8 @@ import Button from './base/button';
 import Slider from './base/slider';
 import AutoCompleteField from './base/autoComplete';
 
+const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
+
 const styles = StyleSheet.create({
     date: {
         marginRight: 30
@@ -39,6 +41,11 @@ const styles = StyleSheet.create({
     btn: {
         flex: 1,
         marginTop: '2em'
+    },
+    image: {
+        backgroundImage: `url('${cdnUrl}/about.jpg')`,
+        backgroundSize: 'cover',
+        flex: 1
     }
 });
 
@@ -86,7 +93,7 @@ class Home extends React.Component {
         };
 
         return (
-            <View>
+            <View style={styles.image}>
                 <Card style={styles.container}>
                     <View style={styles.row}>
                         <AutoCompleteField name="Departure" valueLink={departureLink} viewer={this.props.viewer} />
@@ -105,7 +112,7 @@ class Home extends React.Component {
                         </Button>
                     </View>
                 </Card>
-                <Travel departure={this.props.relay.variables.departure} arrival={this.props.relay.variables.arrival} viewer={this.props.viewer} />
+                <Travel train={this.props.viewer.train} />
             </View>
         );
     }
@@ -117,14 +124,14 @@ export default Relay.createContainer(Home, {
         arrival: ''
     },
     fragments: {
-        viewer: variables => Relay.QL`
+        viewer: () => Relay.QL`
             fragment on Viewer {
                 ${AutoCompleteField.getFragment('viewer')}
                 ${AutoCompleteField.getFragment('viewer')}
-                ${Travel.getFragment('viewer', {
-                    departure: variables.departure,
-                    arrival: variables.arrival
-                })}
+                train(from: $departure, to: $arrival) {
+                    id
+                    ${Travel.getFragment('train')}
+                }
             }
         `
     }

@@ -95,7 +95,7 @@ class Modal extends React.Component {
 
 class Travel extends React.Component {
     static propTypes = {
-        viewer: React.PropTypes.object
+        train: React.PropTypes.object
     };
 
     constructor(props) {
@@ -119,10 +119,15 @@ class Travel extends React.Component {
     }
 
     render() {
-        if (this.props.viewer.start.edges.length !== 0 && this.props.viewer.end.edges.length !== 0) {
+        if (this.props.train.start.edges.length !== 0 && this.props.train.end.edges.length !== 0) {
+            const stations = this.props.train.start.edges
+                .concat([{node: {id: 'separator', name: '...'}}])
+                .concat(this.props.train.end.edges);
+            console.log(this.props.train, stations.map(edge => edge.node.name));
+
             return (
                 <Card style={styles.container}>
-                    <ListView dataSource={this.props.viewer.start.edges.concat([{node: {name: '...'}}]).concat(this.props.viewer.end.edges)}
+                    <ListView dataSource={stations}
                         renderRow={edge => <Text key={edge.node.id}>{edge.node.name}</Text>}/>
                     <Button style={styles.btn} onPress={this.reserve}>
                         <Text style={Button.Text}>Reserve</Text>
@@ -135,14 +140,10 @@ class Travel extends React.Component {
     }
 }
 export default Relay.createContainer(Travel, {
-    initialVariables: {
-        departure: '',
-        arrival: ''
-    },
     fragments: {
-        viewer: () => Relay.QL`
-            fragment on Viewer {
-                start: route(from: $departure, to: $arrival, first: 5) {
+        train: () => Relay.QL`
+            fragment on Train {
+                start: stations(first: 5) {
                     edges {
                         node {
                             id
@@ -150,7 +151,7 @@ export default Relay.createContainer(Travel, {
                         }
                     }
                 }
-                end: route(from: $departure, to: $arrival, last: 5) {
+                end: stations(last: 5) {
                     edges {
                         node {
                             id
