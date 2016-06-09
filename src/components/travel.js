@@ -10,7 +10,7 @@ import {
 import {
     browserHistory
 } from 'react-router';
-
+import moment from 'moment';
 import Card from './base/card';
 import Button from './base/button';
 import Field from './base/field';
@@ -55,6 +55,19 @@ const styles = StyleSheet.create({
         borderColor: '#9e0909',
         backgroundColor: '#9e0909',
         paddingRight: '2.1em'
+    },
+    row: {
+        flexDirection: 'row'
+    },
+    flex: {
+        flex: 1
+    },
+    justify: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    align: {
+        alignSelf: 'center'
     }
 });
 
@@ -128,7 +141,7 @@ class Travel extends React.Component {
 
     pay() {
         const win = window.open('/payment/popup', 'modal');
-        window.onPayment = (err, result) => {
+        window.onPayment = err => {
             console.error(err);
             win.close();
         };
@@ -139,15 +152,22 @@ class Travel extends React.Component {
             const stations = this.props.train.start.edges
                 .concat([{node: {id: 'separator', name: '...'}}])
                 .concat(this.props.train.end.edges);
-            console.log(this.props.train, stations.map(edge => edge.node.name));
+
+            const dateFormatted = moment(this.props.train.date).calendar();
 
             return (
                 <Card style={styles.container}>
-                    <ListView dataSource={stations}
-                        renderRow={edge => <Text key={edge.node.id}>{edge.node.name}</Text>}/>
-                    <Button style={styles.btn} onPress={this.reserve}>
-                        <Text style={Button.Text}>Reserve</Text>
-                    </Button>
+                    <View style={styles.row}>
+                        <ListView style={styles.flex} dataSource={stations}
+                            renderRow={edge => <Text style={styles.align} key={edge.node.id}>{edge.node.name}</Text>}/>
+                        <View style={[styles.flex, styles.justify]}>
+                            <Text>Price : {this.props.train.price} €</Text>
+                            <Text>Date : {dateFormatted}</Text>
+                        </View>
+                    </View>
+                        <Button style={styles.btn} onPress={this.reserve}>
+                            <Text style={Button.Text}>Reserve</Text>
+                        </Button>
                 </Card>
             );
         }
@@ -159,6 +179,8 @@ export default Relay.createContainer(Travel, {
     fragments: {
         train: () => Relay.QL`
             fragment on Train {
+                price
+                date
                 start: stations(first: 5) {
                     edges {
                         node {
