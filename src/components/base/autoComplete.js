@@ -15,7 +15,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     reactAutosuggestContainer: {
-        position: 'relative'
+        position: 'relative',
+        zIndex: 100
     },
     reactAutosuggestInput: {
         width: 240,
