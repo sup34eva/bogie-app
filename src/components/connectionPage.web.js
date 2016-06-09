@@ -4,9 +4,6 @@ import {
     StyleSheet,
     View
 } from 'react-native';
-import {
-    Link
-} from 'react-router';
 
 const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
 
