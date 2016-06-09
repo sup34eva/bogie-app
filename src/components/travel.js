@@ -46,13 +46,23 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: '1.5em'
+    },
+    exit: {
+        width: '2.5em',
+        alignSelf: 'flex-end',
+        borderWidth: 1,
+        borderRadius: 3,
+        borderColor: '#9e0909',
+        backgroundColor: '#9e0909',
+        paddingRight: '2.1em'
     }
 });
 
 class Modal extends React.Component {
     static propTypes = {
         tag: React.PropTypes.string,
-        onPay: React.PropTypes.func
+        onPay: React.PropTypes.func,
+        onClose: React.PropTypes.func
     };
 
     constructor(props) {
@@ -76,6 +86,9 @@ class Modal extends React.Component {
         return (
             <View style={styles.backdrop}>
                 <View style={styles.modal}>
+                    <Button style={styles.exit} onPress={this.props.onClose}>
+                        <Text style={Button.Text}>X</Text>
+                    </Button>
                     <Text style={styles.text}>Enter your mail for reserve</Text>
                     <Field type="email" name="Email" valueLink={emailLink} />
                     <Button style={styles.btn} onPress={() => {
@@ -109,13 +122,16 @@ class Travel extends React.Component {
             this.pay();
         } else {
             const tag = Portal.allocateTag();
-            Portal.showModal(tag, <Modal tag={tag} onPay={this.pay} key={tag}/>);
+            Portal.showModal(tag, <Modal tag={tag} onClose={() => Portal.closeModal(tag)} onPay={this.pay} key={tag}/>);
         }
     }
 
     pay() {
-        const win = window.open('about:blank', 'modal');
-        console.log(win);
+        const win = window.open('/payment/popup', 'modal');
+        window.onPayment = (err, result) => {
+            console.error(err);
+            win.close();
+        };
     }
 
     render() {
