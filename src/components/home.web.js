@@ -11,6 +11,7 @@ import {
 import {
     styles as fieldStyles
 } from './base/field';
+import Card from './base/card';
 import Button from './base/button';
 import Slider from './base/slider';
 import AutoCompleteField from './base/autoComplete';
@@ -23,13 +24,10 @@ const styles = StyleSheet.create({
         marginBottom: '1.25rem'
     },
     container: {
-        padding: '2em',
         width: '75vw',
         marginTop: '3em',
         marginRight: 'auto',
-        marginLeft: 'auto',
-        boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
-        borderRadius: 2
+        marginLeft: 'auto'
     },
     h1: {
         color: 'white'
@@ -86,7 +84,7 @@ class Home extends React.Component {
 
         return (
             <View>
-                <View style={styles.container}>
+                <Card style={styles.container}>
                     <View style={styles.row}>
                         <AutoCompleteField name="Departure" valueLink={departureLink} data={this.props.viewer.departures.edges} />
                         <AutoCompleteField name="Arrival" valueLink={arrivalLink} data={this.props.viewer.arrivals.edges} />
@@ -103,11 +101,11 @@ class Home extends React.Component {
                             <Text style={Button.Text}>Search</Text>
                         </Button>
                     </View>
-                </View>
+                </Card>
                 {this.props.viewer.results.edges.length === 0 || this.state.submit === false ? null :
-                    <View style={styles.container}>
+                    <Card style={styles.container}>
                         <Text style={fieldStyles.label}>Test</Text>
-                    </View>
+                    </Card>
                 }
             </View>
         );
