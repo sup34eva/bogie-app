@@ -1,7 +1,7 @@
 import React from 'react';
-import Autosuggest from 'react-autosuggest';
 import Relay from 'react-relay';
 import moment from 'moment';
+import DatePicker from './base/datePicker';
 import {
     View,
     Text,
@@ -11,11 +11,17 @@ import {
 import {
     styles as fieldStyles
 } from './base/field';
-import DatePicker from './base/datePicker';
 import Button from './base/button';
 import Slider from './base/slider';
+import AutoCompleteField from './base/autoComplete';
 
 const styles = StyleSheet.create({
+    date: {
+        marginRight: 30
+    },
+    dateLabel: {
+        marginBottom: '1.25rem'
+    },
     container: {
         padding: '2em',
         width: '75vw',
@@ -25,80 +31,17 @@ const styles = StyleSheet.create({
         boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
         borderRadius: 2
     },
-    input: {
-        flex: 1
-    },
     h1: {
         color: 'white'
     },
     row: {
         flexDirection: 'row'
     },
-    date: {
-        marginRight: 30
-    },
     btn: {
         flex: 1,
         marginTop: '2em'
-    },
-    dateLabel: {
-        marginBottom: '1.25rem'
     }
 });
-class AutoCompleteField extends React.Component {
-    static propTypes = {
-        data: React.PropTypes.array,
-        name: React.PropTypes.string,
-        valueLink: React.PropTypes.shape({
-            value: React.PropTypes.object,
-            requestChange: React.PropTypes.func
-        })
-    };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            suggestions: this.getSuggestions('')
-        };
-    }
-
-    getSuggestions(value) {
-        const inputValue = value.trim().toLowerCase();
-        const inputLength = inputValue.length;
-
-        return inputLength === 0 ? [] : this.props.data.filter(({node}) => {
-            return node.name.toLowerCase().slice(0, inputLength) === inputValue;
-        });
-    }
-
-    render() {
-        const searchStyle = StyleSheet.resolve({
-            style: fieldStyles.input
-        });
-
-        return (
-            <View style={[fieldStyles.fieldset, styles.input]} component="label">
-                <Text style={fieldStyles.label}>{this.props.name}</Text>
-                <Autosuggest suggestions={this.state.suggestions}
-                    onSuggestionsUpdateRequested={({value}) => {
-                        this.setState({
-                            suggestions: this.getSuggestions(value)
-                        });
-                    }}
-                    getSuggestionValue={({node}) => node.name}
-                    renderSuggestion={({node}) => <span>{node.name}</span>}
-                    inputProps={{
-                        ...searchStyle,
-                        placeholder: this.props.name,
-                        value: this.props.valueLink.value,
-                        onChange: (evt, {newValue}) => {
-                            this.props.valueLink.requestChange(newValue);
-                        }
-                    }} />
-            </View>
-        );
-    }
-}
 
 class Home extends React.Component {
     static propTypes = {
@@ -109,8 +52,8 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            date: moment(),
-            submit: false
+            submit: false,
+            date: moment()
         };
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -122,6 +65,12 @@ class Home extends React.Component {
     }
 
     render() {
+        const dateLink = {
+            value: this.state.date,
+            requestChange: date => {
+                this.setState({date});
+            }
+        };
         const departureLink = {
             value: this.props.relay.variables.departure,
             requestChange: departure => {
@@ -132,12 +81,6 @@ class Home extends React.Component {
             value: this.props.relay.variables.arrival,
             requestChange: arrival => {
                 this.props.relay.setVariables({arrival});
-            }
-        };
-        const dateLink = {
-            value: this.state.date,
-            requestChange: date => {
-                this.setState({date});
             }
         };
 

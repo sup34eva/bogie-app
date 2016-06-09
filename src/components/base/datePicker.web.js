@@ -8,7 +8,7 @@ if (typeof window !== 'undefined') {
 export default class DatePicker extends React.Component {
     static propTypes = {
         valueLink: React.PropTypes.shape({
-            value: React.PropTypes.string,
+            value: React.PropTypes.object,
             requestChange: React.PropTypes.func
         })
     };
