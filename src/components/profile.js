@@ -126,7 +126,7 @@ class Profile extends React.Component {
                 </View>
                 <View>
                     <Text>Historique de la commande</Text>
-                    <ListView dataSource={this.props.viewer.me.history.edges} renderRow={edge => <History key={edge.node.id} history={edge.node} />}/>
+                    <ListView dataSource={this.props.viewer.me.history.edges} renderRow={edge => <Text> key={edge.node.id} history={edge.node}</Text>}/>
                 </View>
             </View>
         );
