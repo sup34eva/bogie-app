@@ -13,6 +13,44 @@ import {
 const styles = StyleSheet.create({
     input: {
         flex: 1
+    },
+    reactAutosuggestContainer: {
+        position: 'relative'
+    },
+    reactAutosuggestInput: {
+        width: 240,
+        height: 30,
+        padding: 15,
+        fontFamily: 'Helvetica, sans-serif',
+        fontWeight: '300',
+        fontSize: 16,
+        borderColor: '#aaa',
+        borderStyle: 'solid',
+        borderWidth: '1px',
+        borderRadius: 4
+    },
+    reactAutosuggestSuggestionsContainer: {
+        position: 'absolute',
+        top: 51,
+        width: 280,
+        margin: 0,
+        padding: 0,
+        listStyle: 'none',
+        borderColor: '#aaa',
+        borderStyle: 'solid',
+        borderWidth: '1px',
+        backgroundColor: '#fff',
+        fontFamily: 'Helvetica, sans-serif',
+        fontWeight: '300',
+        fontSize: 16,
+        zIndex: 2
+    },
+    reactAutosuggestSuggestion: {
+        cursor: 'pointer',
+        padding: 15
+    },
+    reactAutosuggestSuggestionFocused: {
+        backgroundColor: '#ddd'
     }
 });
 
@@ -51,7 +89,15 @@ class AutoCompleteField extends React.Component {
         return (
             <View style={[fieldStyles.fieldset, styles.input]} component="label">
                 <Text style={fieldStyles.label}>{this.props.name}</Text>
-                <Autosuggest suggestions={this.state.suggestions}
+                <Autosuggest
+                    theme={{
+                        container: StyleSheet.resolve({style: styles.reactAutosuggestContainer}).className,
+                        input: StyleSheet.resolve({style: styles.reactAutosuggestInput}).className,
+                        suggestionsContainer: StyleSheet.resolve({style: styles.reactAutosuggestSuggestionsContainer}).className,
+                        suggestion: StyleSheet.resolve({style: styles.reactAutosuggestSuggestion}).className,
+                        suggestionFocused: StyleSheet.resolve({style: styles.reactAutosuggestSuggestionFocused}).className
+                    }}
+                    suggestions={this.state.suggestions}
                     onSuggestionsUpdateRequested={({value}) => {
                         this.setState({
                             suggestions: this.getSuggestions(value)

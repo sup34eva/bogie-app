@@ -10,7 +10,7 @@ import {
 import {
     browserHistory
 } from 'react-router';
-
+import moment from 'moment';
 import Card from './base/card';
 import Button from './base/button';
 import Field from './base/field';
@@ -46,13 +46,36 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: '1.5em'
+    },
+    exit: {
+        width: '2.5em',
+        alignSelf: 'flex-end',
+        borderWidth: 1,
+        borderRadius: 3,
+        borderColor: '#9e0909',
+        backgroundColor: '#9e0909',
+        paddingRight: '2.1em'
+    },
+    row: {
+        flexDirection: 'row'
+    },
+    flex: {
+        flex: 1
+    },
+    justify: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    align: {
+        alignSelf: 'center'
     }
 });
 
 class Modal extends React.Component {
     static propTypes = {
         tag: React.PropTypes.string,
-        onPay: React.PropTypes.func
+        onPay: React.PropTypes.func,
+        onClose: React.PropTypes.func
     };
 
     constructor(props) {
@@ -76,6 +99,9 @@ class Modal extends React.Component {
         return (
             <View style={styles.backdrop}>
                 <View style={styles.modal}>
+                    <Button style={styles.exit} onPress={this.props.onClose}>
+                        <Text style={Button.Text}>X</Text>
+                    </Button>
                     <Text style={styles.text}>Enter your mail for reserve</Text>
                     <Field type="email" name="Email" valueLink={emailLink} />
                     <Button style={styles.btn} onPress={() => {
@@ -109,13 +135,16 @@ class Travel extends React.Component {
             this.pay();
         } else {
             const tag = Portal.allocateTag();
-            Portal.showModal(tag, <Modal tag={tag} onPay={this.pay} key={tag}/>);
+            Portal.showModal(tag, <Modal tag={tag} onClose={() => Portal.closeModal(tag)} onPay={this.pay} key={tag}/>);
         }
     }
 
     pay() {
-        const win = window.open('about:blank', 'modal');
-        console.log(win);
+        const win = window.open('/payment/popup', 'modal');
+        window.onPayment = err => {
+            console.error(err);
+            win.close();
+        };
     }
 
     render() {
@@ -123,15 +152,22 @@ class Travel extends React.Component {
             const stations = this.props.train.start.edges
                 .concat([{node: {id: 'separator', name: '...'}}])
                 .concat(this.props.train.end.edges);
-            console.log(this.props.train, stations.map(edge => edge.node.name));
+
+            const dateFormatted = moment(this.props.train.date).calendar();
 
             return (
                 <Card style={styles.container}>
-                    <ListView dataSource={stations}
-                        renderRow={edge => <Text key={edge.node.id}>{edge.node.name}</Text>}/>
-                    <Button style={styles.btn} onPress={this.reserve}>
-                        <Text style={Button.Text}>Reserve</Text>
-                    </Button>
+                    <View style={styles.row}>
+                        <ListView style={styles.flex} dataSource={stations}
+                            renderRow={edge => <Text style={styles.align} key={edge.node.id}>{edge.node.name}</Text>}/>
+                        <View style={[styles.flex, styles.justify]}>
+                            <Text>Price : {this.props.train.price} €</Text>
+                            <Text>Date : {dateFormatted}</Text>
+                        </View>
+                    </View>
+                        <Button style={styles.btn} onPress={this.reserve}>
+                            <Text style={Button.Text}>Reserve</Text>
+                        </Button>
                 </Card>
             );
         }
@@ -143,6 +179,8 @@ export default Relay.createContainer(Travel, {
     fragments: {
         train: () => Relay.QL`
             fragment on Train {
+                price
+                date
                 start: stations(first: 5) {
                     edges {
                         node {

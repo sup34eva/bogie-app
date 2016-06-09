@@ -5,7 +5,6 @@ import ExecutePayment from './mutations/executePayment';
 
 export function popup(req, res) {
     Relay.Store.commitUpdate(new CreatePayment({
-        accessToken: req.cookies.token,
         returnUrl: `${req.protocol}://${req.get('host')}/payment/complete`,
         cancelUrl: `${req.protocol}://${req.get('host')}/payment/cancel`,
         clientId: process.env.CLIENT_ID,
@@ -17,15 +16,17 @@ export function popup(req, res) {
         },
         onFailure: transaction => {
             const err = transaction.getError();
-            console.error('onFailure', err.message, err.stack);
-            res.status(500).end(``);
-
+            console.error(err.message);
+            res.status(500).end(`
+                <script>window.opener.onPayment('Creation error')</script>
+            `);
         }
     });
 }
 
 export function complete(req, res) {
     Relay.Store.commitUpdate(new ExecutePayment({
+        accessToken: req.cookies.token,
         payment: req.query.paymentId,
         payer: req.query.PayerID,
         clientId: process.env.CLIENT_ID,
@@ -33,18 +34,22 @@ export function complete(req, res) {
     }), {
         onSuccess: ({createPayment: {payment}}) => {
             console.log('onSuccess', payment.id);
-            res.redirect(payment.link);
-            // TODO: Close popup
+            res.status(500).end(`
+                <script>window.opener.onPayment(null, '${payment.id}')</script>
+            `);
         },
         onFailure: transaction => {
             const err = transaction.getError();
             console.error('onFailure', err.message, err.stack);
-            res.status(500).end();
-            // TODO: Close popup
+            res.status(500).end(`
+                <script>window.opener.onPayment('Completion error')</script>
+            `);
         }
     });
 }
 
-export function cancel() {
-    // TODO: Close popup
+export function cancel(req, res) {
+    res.status(500).end(`
+        <script>window.opener.onPayment('Canceled')</script>
+    `);
 }
