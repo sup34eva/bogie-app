@@ -37,7 +37,9 @@ const babelPlugins = [
 const wpPlugins = [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.NormalModuleReplacementPlugin(/^\.\/(assets|components|mutations)\/[a-z]/, result => {
-        result.request = result.request.substr(2);
+        if (result.context.match(/web/) !== null) {
+            result.request = result.request.substr(2);
+        }
     }),
     new webpack.DefinePlugin(
         Object.keys(env).reduce((carry, key) => {

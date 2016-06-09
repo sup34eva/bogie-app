@@ -60,9 +60,12 @@ const barLinks = [{
     to: '/login',
     logged: false
 }, {
-    name: 'register',
+    name: 'Register',
     to: '/Register',
     logged: false
+}, {
+    name: 'About',
+    to: '/About'
 }];
 
 function TopBar({activeRoute}) {
@@ -138,6 +141,8 @@ export default class App extends React.Component {
                 return list;
             }, [])
             .find(route => this.context.router.isActive({pathname: route.path}, true));
+
+        console.log(activeRoute);
 
         return (
             <div>

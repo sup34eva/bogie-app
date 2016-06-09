@@ -1,12 +1,16 @@
 import React from 'react';
 import Slider from 'react-slider';
+import Autosuggest from 'react-autosuggest';
+import Relay from 'react-relay';
 import {
     View,
     Text,
     StyleSheet
 } from 'react-native';
 
-import Field from './base/field';
+import Field, {
+    styles as fieldStyles
+} from './base/field';
 
 const styles = StyleSheet.create({
     container: {
@@ -46,8 +50,66 @@ const styles = StyleSheet.create({
         marginRight: 5
     }
 });
+class AutoCompleteField extends React.Component {
+    static propTypes = {
+        data: React.PropTypes.array,
+        name: React.PropTypes.string,
+        valueLink: React.PropTypes.shape({
+            value: React.PropTypes.string,
+            requestChange: React.PropTypes.func
+        })
+    };
 
-export default class Home extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            suggestions: this.getSuggestions('')
+        };
+    }
+
+    getSuggestions(value) {
+        const inputValue = value.trim().toLowerCase();
+        const inputLength = inputValue.length;
+
+        return inputLength === 0 ? [] : this.props.data.filter(({node}) => {
+            return node.name.toLowerCase().slice(0, inputLength) === inputValue;
+        });
+    }
+
+    render() {
+        const searchStyle = StyleSheet.resolve({
+            style: fieldStyles.input
+        });
+
+        return (
+            <View style={[fieldStyles.fieldset, styles.input]} component="label">
+                <Text style={fieldStyles.label}>{this.props.name}</Text>
+                <Autosuggest suggestions={this.state.suggestions}
+                    onSuggestionsUpdateRequested={({value}) => {
+                        this.setState({
+                            suggestions: this.getSuggestions(value)
+                        });
+                    }}
+                    getSuggestionValue={({node}) => node.name}
+                    renderSuggestion={({node}) => <span>{node.name}</span>}
+                    inputProps={{
+                        ...searchStyle,
+                        placeholder: this.props.name,
+                        value: this.props.valueLink.value,
+                        onChange: (evt, {newValue}) => {
+                            this.props.valueLink.requestChange(newValue);
+                        }
+                    }} />
+            </View>
+        );
+    }
+}
+
+class Home extends React.Component {
+    static propTypes = {
+        viewer: React.PropTypes.object
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -86,15 +148,14 @@ export default class Home extends React.Component {
 
         const rangeStyle = StyleSheet.resolve({style: styles.range});
         const handleStyle = StyleSheet.resolve({style: styles.rangeHandle});
-
         const hoursFrom = this.state.range[0] * 15;
         const hoursTo = this.state.range[1] * 15;
 
         return (
             <View style={styles.container}>
                 <View style={styles.row}>
-                    <Field style={styles.input} name="Departure" valueLink={departureLink}/>
-                    <Field style={styles.input} name="Arrival" valueLink={arrivalLink}/>
+                    <AutoCompleteField name="Departure" valueLink={departureLink} data={this.props.viewer.stations.edges} />
+                    <AutoCompleteField name="Arrival" valueLink={arrivalLink} data={this.props.viewer.stations.edges} />
                 </View>
                 <View style={styles.row}>
                     <Field style={[styles.input, styles.date]} name="Date" valueLink={dateLink}/>
@@ -109,3 +170,23 @@ export default class Home extends React.Component {
         );
     }
 }
+
+export default Relay.createContainer(Home, {
+    initialVariables: {
+        name: ''
+    },
+    fragments: {
+        viewer: () => Relay.QL`
+            fragment on Viewer {
+                stations(first: 10) {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        `
+    }
+});

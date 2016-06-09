@@ -48,7 +48,7 @@ const tokenQuery = {
 export default createRoutes(
     <RelayRouter>
         <Route path="/" component={App}>
-            <IndexRoute title="Home" component={Home}/>
+            <IndexRoute title="Home" component={Home} queries={rootQuery} />
             <Route component={ConnectionPage}>
                 <Route path="/login" title="Login" hideNavigation component={LoginForm} />
                 <Route path="/register" title="Register" hideNavigation component={RegisterForm} queries={rootQuery} />
