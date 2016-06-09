@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    TouchableHighlight,
     StyleSheet,
     View
 } from 'react-native';
@@ -37,6 +36,10 @@ export const styles = StyleSheet.create({
         outline: '0'
     },
 
+    buttonActive: {
+        backgroundColor: '#177568'
+    },
+
     buttonDisabled: {
         opacity: 0.5,
         cursor: 'default'
@@ -71,7 +74,8 @@ export default class Button extends React.Component {
         style: View.propTypes.style,
         variant: React.PropTypes.oneOf(['outline']),
         disabled: React.PropTypes.bool,
-        children: React.PropTypes.node
+        children: React.PropTypes.node,
+        onPress: React.PropTypes.func
     };
 
     constructor(props) {
@@ -86,6 +90,7 @@ export default class Button extends React.Component {
         const style = [
             styles.button,
             this.state.hover && styles.buttonHover,
+            this.state.active && styles.buttonActive,
             this.props.disabled && styles.buttonDisabled,
             this.props.disabled && this.state.hover && styles.buttonDisabledHover
         ];
@@ -97,6 +102,7 @@ export default class Button extends React.Component {
                 case 'variant':
                     style.push(variants[this.state.hover ? 'hover' : 'none'][this.props.variant]);
                     break;
+                case 'onPress':
                 case 'children':
                     break;
                 default:
@@ -105,10 +111,14 @@ export default class Button extends React.Component {
             }
         });
 
+        const styleProps = StyleSheet.resolve({
+            style
+        });
+
         return (
-            <TouchableHighlight {...filteredProps} style={style} underlayColor="#177568">
+            <button {...filteredProps} {...styleProps} onClick={this.props.onPress}>
                 {this.props.children}
-            </TouchableHighlight>
+            </button>
         );
     }
 }

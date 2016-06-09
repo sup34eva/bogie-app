@@ -13,6 +13,12 @@ import {
 const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
 
 const styles = StyleSheet.create({
+    appContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh'
+    },
+
     topBar: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -27,16 +33,18 @@ const styles = StyleSheet.create({
     },
     linkActive: {
         position: 'relative',
-        color: '#a85342'
+        color: 'white',
+        backgroundColor: '#25A795'
     },
     indicator: {
         position: 'absolute',
-        bottom: '-0.5em',
+        zIndex: 10,
+        bottom: '-0.49em',
         left: '50%',
         borderStyle: 'solid',
         borderWidth: '0.5em',
         borderColor: 'transparent',
-        borderTopColor: 'white',
+        borderTopColor: '#25A795',
         borderBottomWidth: 0,
         transform: [{
             translateX: '-50%'
@@ -60,9 +68,12 @@ const barLinks = [{
     to: '/login',
     logged: false
 }, {
-    name: 'register',
-    to: '/Register',
+    name: 'Register',
+    to: '/register',
     logged: false
+}, {
+    name: 'About',
+    to: '/about'
 }];
 
 function TopBar({activeRoute}) {
@@ -139,8 +150,13 @@ export default class App extends React.Component {
             }, [])
             .find(route => this.context.router.isActive({pathname: route.path}, true));
 
+        const stylesheet = StyleSheet.renderToString();
+        const divStyle = StyleSheet.resolve({
+            style: styles.appContainer
+        });
+
         return (
-            <div>
+            <div {...divStyle}>
                 <Helmet title={(activeRoute && activeRoute.title && `Bogie - ${activeRoute.title}`) || 'Bogie'} htmlAttributes={{
                     lang: 'en'
                 }} meta={[{
@@ -177,6 +193,7 @@ export default class App extends React.Component {
                         .bar {
                             top: 15px;
                             height: 10px;
+                            background-color: lightgrey;
                         }
                         .bar-1 {
                             margin: 0 20px;
@@ -185,7 +202,7 @@ export default class App extends React.Component {
                     `
                 }, {
                     id: StyleSheet.elementId,
-                    cssText: StyleSheet.renderToString()
+                    cssText: stylesheet
                 }]} script={scripts} />
                 {activeRoute && activeRoute.hideNavigation !== true && <TopBar activeRoute={activeRoute} />}
                 {this.props.children}

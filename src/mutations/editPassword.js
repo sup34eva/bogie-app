@@ -12,7 +12,7 @@ export default class EditPassword extends Relay.Mutation {
     getVariables() {
         return {
             currentPassword: this.props.currentPassword,
-            newPassword : this.props.newPassword,
+            newPassword: this.props.newPassword,
             token: this.props.token
         };
     }

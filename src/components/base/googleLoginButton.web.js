@@ -1,7 +1,6 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import {
-    TouchableHighlight,
     StyleSheet,
     View,
     Text
@@ -56,8 +55,12 @@ export default class GoogleLoginButton extends React.Component {
     }
 
     render() {
+        const styleProps = StyleSheet.resolve({
+            style: [styles.button, googleStyles.button, this.props.style]
+        });
+
         return (
-            <TouchableHighlight style={[styles.button, googleStyles.button, this.props.style]} onPress={this.onClick} underlayColor="#a2392c">
+            <button {...styleProps} onClick={this.onClick}>
                 <Text style={styles.buttonText}>
                     <Helmet script={[{
                         id: 'google-login',
@@ -65,7 +68,7 @@ export default class GoogleLoginButton extends React.Component {
                     }]} />
                     Login with Google
                 </Text>
-            </TouchableHighlight>
+            </button>
         );
     }
 }

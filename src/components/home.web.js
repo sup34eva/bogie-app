@@ -1,26 +1,34 @@
 import React from 'react';
-import Slider from 'react-slider';
+import Relay from 'react-relay';
+import moment from 'moment';
+import DatePicker from './base/datePicker';
 import {
     View,
     Text,
     StyleSheet
 } from 'react-native';
 
-import Field from './base/field';
+import {
+    styles as fieldStyles
+} from './base/field';
+import Travel from './travel';
+import Card from './base/card';
+import Button from './base/button';
+import Slider from './base/slider';
+import AutoCompleteField from './base/autoComplete';
 
 const styles = StyleSheet.create({
+    date: {
+        marginRight: 30
+    },
+    dateLabel: {
+        marginBottom: '1.25rem'
+    },
     container: {
-        padding: '2em',
-        maxWidth: '75vw',
+        width: '75vw',
         marginTop: '3em',
         marginRight: 'auto',
-        marginBottom: '3em',
-        marginLeft: 'auto',
-        boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.5)',
-        borderRadius: 2
-    },
-    input: {
-        flex: 1
+        marginLeft: 'auto'
     },
     h1: {
         color: 'white'
@@ -28,37 +36,42 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row'
     },
-
-    range: {
-        flex: 2,
-        height: 50
-    },
-    rangeHandle: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'lightgrey',
-        borderColor: 'darkgrey',
-        borderWidth: 1,
-        borderStyle: 'solid'
-    },
-    date: {
-        marginRight: 5
+    btn: {
+        flex: 1,
+        marginTop: '2em'
     }
 });
 
-export default class Home extends React.Component {
+class Home extends React.Component {
+    static propTypes = {
+        viewer: React.PropTypes.object,
+        relay: React.PropTypes.object
+    };
+
     constructor(props) {
         super(props);
+        this.onSubmit = this.onSubmit.bind(this);
         this.state = {
             departure: '',
             arrival: '',
-            date: '',
-            range: [0, 96]
+            date: moment()
         };
     }
 
+    onSubmit() {
+        this.props.relay.setVariables({
+            departure: this.state.departure,
+            arrival: this.state.arrival
+        });
+    }
+
     render() {
+        const dateLink = {
+            value: this.state.date,
+            requestChange: date => {
+                this.setState({date});
+            }
+        };
         const departureLink = {
             value: this.state.departure,
             requestChange: departure => {
@@ -71,41 +84,48 @@ export default class Home extends React.Component {
                 this.setState({arrival});
             }
         };
-        const dateLink = {
-            value: this.state.date,
-            requestChange: date => {
-                this.setState({date});
-            }
-        };
-        const rangeLink = {
-            value: this.state.range,
-            requestChange: range => {
-                this.setState({range});
-            }
-        };
-
-        const rangeStyle = StyleSheet.resolve({style: styles.range});
-        const handleStyle = StyleSheet.resolve({style: styles.rangeHandle});
-
-        const hoursFrom = this.state.range[0] * 15;
-        const hoursTo = this.state.range[1] * 15;
 
         return (
-            <View style={styles.container}>
-                <View style={styles.row}>
-                    <Field style={styles.input} name="Departure" valueLink={departureLink}/>
-                    <Field style={styles.input} name="Arrival" valueLink={arrivalLink}/>
-                </View>
-                <View style={styles.row}>
-                    <Field style={[styles.input, styles.date]} name="Date" valueLink={dateLink}/>
-                    <View style={styles.range}>
-                        <Text>{Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
-                        <Slider onChange={rangeLink.requestChange} value={rangeLink.value} max={96} withBars
-                            className={rangeStyle.className} barClassName="bar"
-                            handleClassName={handleStyle.className} />
+            <View>
+                <Card style={styles.container}>
+                    <View style={styles.row}>
+                        <AutoCompleteField name="Departure" valueLink={departureLink} viewer={this.props.viewer} />
+                        <AutoCompleteField name="Arrival" valueLink={arrivalLink} viewer={this.props.viewer} />
                     </View>
-                </View>
+                    <View style={styles.row}>
+                        <View style={styles.date}>
+                            <Text style={[fieldStyles.label, styles.dateLabel]}>Date</Text>
+                            <DatePicker valueLink={dateLink}/>
+                        </View>
+                        <Slider/>
+                    </View>
+                    <View style={styles.row}>
+                        <Button style={styles.btn} onPress={this.onSubmit}>
+                            <Text style={Button.Text}>Search</Text>
+                        </Button>
+                    </View>
+                </Card>
+                <Travel departure={this.props.relay.variables.departure} arrival={this.props.relay.variables.arrival} viewer={this.props.viewer} />
             </View>
         );
     }
 }
+
+export default Relay.createContainer(Home, {
+    initialVariables: {
+        departure: '',
+        arrival: ''
+    },
+    fragments: {
+        viewer: variables => Relay.QL`
+            fragment on Viewer {
+                ${AutoCompleteField.getFragment('viewer')}
+                ${AutoCompleteField.getFragment('viewer')}
+                ${Travel.getFragment('viewer', {
+                    departure: variables.departure,
+                    arrival: variables.arrival
+                })}
+            }
+        `
+    }
+});

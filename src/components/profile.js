@@ -1,9 +1,7 @@
 import React from 'react';
 import {
-    Platform,
     View,
-    Text,
-    Image
+    Text
 } from 'react-native';
 import Relay from 'react-relay';
 import Field from './base/field';

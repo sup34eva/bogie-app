@@ -4,9 +4,6 @@ import {
     StyleSheet,
     View
 } from 'react-native';
-import {
-    Link
-} from 'react-router';
 
 const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
 
@@ -19,24 +16,11 @@ const cssStyles = {
         WebkitFilter: 'blur(10px)',
         filter: 'blur(10px)',
         margin: -15
-    },
-    tab: {
-        flex: 1,
-        color: '#2D2D2D',
-        textAlign: 'center',
-        padding: '1em',
-        textTransform: 'uppercase',
-        textDecoration: 'none',
-        fontSize: '1.2em'
-    },
-    tabActive: {
-        color: '#fff',
-        backgroundColor: '#25A795'
     }
 };
 const styles = StyleSheet.create({
     body: {
-        height: '100vh',
+        flex: 1,
         backgroundImage: `url('${cdnUrl}/background.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -49,22 +33,11 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         overflow: 'hidden',
         boxShadow: '0 0 20px rgba(0, 0, 0, 0.65)',
-        flexDirection: 'column'
-    },
-    tabBar: {
-        position: 'relative',
-        flexDirection: 'row',
-        borderBottomWidth: '4px',
-        borderBottomStyle: 'solid',
-        borderBottomColor: '#25A795'
-    },
-    tabContent: {
-        flex: 1,
+        flexDirection: 'column',
         paddingTop: '3em',
         paddingRight: '2em',
         paddingBottom: '3em',
-        paddingLeft: '2em',
-        position: 'relative'
+        paddingLeft: '2em'
     }
 });
 
@@ -109,27 +82,19 @@ export default class ConnectionPage extends React.Component {
 
     handleResize() {
         if (this.refs.modal) {
-            const rect = ReactDOM.findDOMNode(this.refs.modal).getBoundingClientRect();
-            const changed = ['top', 'right', 'bottom', 'left'].filter(key => {
-                if (key === 'right') {
-                    return window.innerWidth - rect[key] !== this.state[key];
-                }
-                if (key === 'bottom') {
-                    return window.innerHeight - rect[key] !== this.state[key];
-                }
-                return rect[key] !== this.state[key];
-            });
+            const modal = ReactDOM.findDOMNode(this.refs.modal);
+            const body = modal.parentNode;
+
+            const rect = modal.getBoundingClientRect();
+            const bodyRect = body.getBoundingClientRect();
+
+            const changed = ['top', 'right', 'bottom', 'left'].filter(key =>
+                (rect[key] - bodyRect[key]) !== this.state[key]
+            );
 
             if (changed.length > 0) {
                 this.setState(changed.reduce((state, key) => {
-                    if (key === 'right') {
-                        state[key] = window.innerWidth - rect[key];
-                    } else if (key === 'bottom') {
-                        state[key] = window.innerHeight - rect[key];
-                    } else {
-                        state[key] = rect[key];
-                    }
-
+                    state[key] = rect[key] - bodyRect[key];
                     return state;
                 }, {}));
             }
@@ -143,15 +108,10 @@ export default class ConnectionPage extends React.Component {
                     <div style={{
                         ...cssStyles.blur,
                         top: -this.state.top,
-                        right: -this.state.right,
-                        bottom: -this.state.bottom,
+                        right: this.state.right,
+                        bottom: this.state.bottom,
                         left: -this.state.left
                     }} />
-                    <View style={styles.tabBar}>
-                        {this.props.route.childRoutes.map(({path}) =>
-                            <Link to={path} key={path} style={cssStyles.tab} activeStyle={cssStyles.tabActive}>{path.slice(1)}</Link>
-                        )}
-                    </View>
                     {React.cloneElement(this.props.children, {
                         ...this.props,
                         style: [this.props.style, styles.tabContent]

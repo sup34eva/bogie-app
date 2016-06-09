@@ -1,7 +1,6 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import {
-    TouchableHighlight,
     StyleSheet,
     View,
     Text
@@ -65,8 +64,12 @@ export default class FacebookLoginButton extends React.Component {
     }
 
     render() {
+        const styleProps = StyleSheet.resolve({
+            style: [styles.button, fbStyles.button, this.props.style]
+        });
+
         return (
-            <TouchableHighlight style={[styles.button, fbStyles.button, this.props.style]} onPress={this.onClick} underlayColor="#435a8b">
+            <button {...styleProps} onClick={this.onClick}>
                 <Text style={styles.buttonText}>
                     <Helmet script={[{
                         id: 'facebook-jssdk',
@@ -74,7 +77,7 @@ export default class FacebookLoginButton extends React.Component {
                     }]} />
                     Login with Facebook
                 </Text>
-            </TouchableHighlight>
+            </button>
         );
     }
 }

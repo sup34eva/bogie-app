@@ -6,7 +6,7 @@ import {
     Text
 } from 'react-native';
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     fieldset: {
         position: 'relative',
         marginBottom: '1.5rem',

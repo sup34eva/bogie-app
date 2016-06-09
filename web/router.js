@@ -49,14 +49,14 @@ const tokenQuery = {
 export default createRoutes(
     <RelayRouter>
         <Route path="/" component={App}>
-            <IndexRoute title="Home" component={Home}/>
+            <IndexRoute title="Home" component={Home} queries={rootQuery} />
             <Route component={ConnectionPage}>
-                <Route path="/login" title="Login" hideNavigation component={LoginForm} />
-                <Route path="/register" title="Register" hideNavigation component={RegisterForm} queries={rootQuery} />
+                <Route path="/login" title="Login" component={LoginForm} />
+                <Route path="/register" title="Register" component={RegisterForm} queries={rootQuery} />
             </Route>
             <Route path="/about" title="About" component={About} />
             <Route path="/profile" title="Profile" component={Profile} prepareParams={prepareToken} queries={tokenQuery} onEnter={ensureLogin} />
-            
+
             <Route path="/logout" onEnter={({location}, replace) => {
                 cookie.remove('token');
                 replace('/login');
