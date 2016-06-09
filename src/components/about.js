@@ -1,13 +1,12 @@
 import React from 'react';
 import {
     Platform,
-    StyleSheet,
     View,
     Text,
-    Image
+    Image,
+    Field,
+    StyleSheet
 } from 'react-native';
-import Relay from 'react-relay';
-import TopBar from './topBar';
 const styles = StyleSheet.create({
     container: {
         alignSelf: 'center',
@@ -29,7 +28,7 @@ const styles = StyleSheet.create({
 
 });
 
-export default class about extends React.Component {
+export default class About extends React.Component {
     static propTypes = {
         onConnect: React.PropTypes.func,
         style: View.propTypes.style
@@ -37,7 +36,6 @@ export default class about extends React.Component {
     render() {
         return (
             <View>
-            <TopBar />
             <View style={styles.about}>
                 <View style={styles.container}>
                     <Text style={styles.title}>1.Installation</Text>
