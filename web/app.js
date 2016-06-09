@@ -13,6 +13,12 @@ import {
 const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
 
 const styles = StyleSheet.create({
+    appContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh'
+    },
+
     topBar: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -144,10 +150,13 @@ export default class App extends React.Component {
             }, [])
             .find(route => this.context.router.isActive({pathname: route.path}, true));
 
-        console.log(activeRoute);
+        const stylesheet = StyleSheet.renderToString();
+        const divStyle = StyleSheet.resolve({
+            style: styles.appContainer
+        });
 
         return (
-            <div>
+            <div {...divStyle}>
                 <Helmet title={(activeRoute && activeRoute.title && `Bogie - ${activeRoute.title}`) || 'Bogie'} htmlAttributes={{
                     lang: 'en'
                 }} meta={[{
@@ -193,7 +202,7 @@ export default class App extends React.Component {
                     `
                 }, {
                     id: StyleSheet.elementId,
-                    cssText: StyleSheet.renderToString()
+                    cssText: stylesheet
                 }]} script={scripts} />
                 {activeRoute && activeRoute.hideNavigation !== true && <TopBar activeRoute={activeRoute} />}
                 {this.props.children}
