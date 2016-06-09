@@ -2,25 +2,27 @@ import React from 'react';
 import Slider from 'react-slider';
 import Autosuggest from 'react-autosuggest';
 import Relay from 'react-relay';
+import moment from 'moment';
 import {
     View,
     Text,
     StyleSheet
 } from 'react-native';
 
-import Field, {
+import {
     styles as fieldStyles
 } from './base/field';
+import DatePicker from './base/datePicker';
+import Button from './base/button';
 
 const styles = StyleSheet.create({
     container: {
         padding: '2em',
-        maxWidth: '75vw',
+        width: '75vw',
         marginTop: '3em',
         marginRight: 'auto',
-        marginBottom: '3em',
         marginLeft: 'auto',
-        boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.5)',
+        boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
         borderRadius: 2
     },
     input: {
@@ -47,7 +49,14 @@ const styles = StyleSheet.create({
         borderStyle: 'solid'
     },
     date: {
-        marginRight: 5
+        marginRight: 30
+    },
+    btn: {
+        flex: 1,
+        marginTop: '2em'
+    },
+    dateLabel: {
+        marginBottom: '1.25rem'
     }
 });
 class AutoCompleteField extends React.Component {
@@ -107,30 +116,37 @@ class AutoCompleteField extends React.Component {
 
 class Home extends React.Component {
     static propTypes = {
-        viewer: React.PropTypes.object
+        viewer: React.PropTypes.object,
+        relay: React.PropTypes.object
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            departure: '',
-            arrival: '',
-            date: '',
-            range: [0, 96]
+            date: moment(),
+            range: [0, 96],
+            submit: false
         };
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onSubmit() {
+        this.setState({
+            submit: true
+        });
     }
 
     render() {
         const departureLink = {
-            value: this.state.departure,
+            value: this.props.relay.variables.departure,
             requestChange: departure => {
-                this.setState({departure});
+                this.props.relay.setVariables({departure});
             }
         };
         const arrivalLink = {
-            value: this.state.arrival,
+            value: this.props.relay.variables.arrival,
             requestChange: arrival => {
-                this.setState({arrival});
+                this.props.relay.setVariables({arrival});
             }
         };
         const dateLink = {
@@ -152,20 +168,35 @@ class Home extends React.Component {
         const hoursTo = this.state.range[1] * 15;
 
         return (
-            <View style={styles.container}>
-                <View style={styles.row}>
-                    <AutoCompleteField name="Departure" valueLink={departureLink} data={this.props.viewer.stations.edges} />
-                    <AutoCompleteField name="Arrival" valueLink={arrivalLink} data={this.props.viewer.stations.edges} />
-                </View>
-                <View style={styles.row}>
-                    <Field style={[styles.input, styles.date]} name="Date" valueLink={dateLink}/>
-                    <View style={styles.range}>
-                        <Text>{Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
-                        <Slider onChange={rangeLink.requestChange} value={rangeLink.value} max={96} withBars
-                            className={rangeStyle.className} barClassName="bar"
-                            handleClassName={handleStyle.className} />
+            <View>
+                <View style={styles.container}>
+                    <View style={styles.row}>
+                        <AutoCompleteField name="Departure" valueLink={departureLink} data={this.props.viewer.departures.edges} />
+                        <AutoCompleteField name="Arrival" valueLink={arrivalLink} data={this.props.viewer.arrivals.edges} />
+                    </View>
+                    <View style={styles.row}>
+                        <View style={styles.date}>
+                            <Text style={[fieldStyles.label, styles.dateLabel]}>Date</Text>
+                            <DatePicker valueLink={dateLink}/>
+                        </View>
+                        <View style={styles.range}>
+                            <Text style={fieldStyles.label}>Hours {Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
+                            <Slider onChange={rangeLink.requestChange} value={rangeLink.value} max={96} withBars
+                                className={rangeStyle.className} barClassName="bar"
+                                handleClassName={handleStyle.className} />
+                        </View>
+                    </View>
+                    <View style={styles.row}>
+                        <Button style={styles.btn} onPress={this.onSubmit}>
+                            <Text style={Button.Text}>Search</Text>
+                        </Button>
                     </View>
                 </View>
+                {this.props.viewer.results.edges.length === 0 || this.state.submit === false ? null :
+                    <View style={styles.container}>
+                        <Text style={fieldStyles.label}>Test</Text>
+                    </View>
+                }
             </View>
         );
     }
@@ -173,12 +204,29 @@ class Home extends React.Component {
 
 export default Relay.createContainer(Home, {
     initialVariables: {
-        name: ''
+        departure: '',
+        arrival: ''
     },
     fragments: {
         viewer: () => Relay.QL`
             fragment on Viewer {
-                stations(first: 10) {
+                departures: stations(filter: $departure, first: 5) {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+                arrivals: stations(filter: $arrival, first: 5) {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+                results: route(from: $departure, to: $arrival, first: 1){
                     edges {
                         node {
                             id

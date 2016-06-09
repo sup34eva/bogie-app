@@ -102,6 +102,9 @@ const config = {
             query: {
                 name: '[name].[hash:16].[ext]'
             }
+        }, {
+            test: /\.css?$/,
+            loaders: ['style', 'raw']
         }]
     },
     output: {

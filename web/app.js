@@ -27,16 +27,18 @@ const styles = StyleSheet.create({
     },
     linkActive: {
         position: 'relative',
-        color: '#a85342'
+        color: 'white',
+        backgroundColor: '#25A795'
     },
     indicator: {
         position: 'absolute',
-        bottom: '-0.5em',
+        zIndex: 10,
+        bottom: '-0.49em',
         left: '50%',
         borderStyle: 'solid',
         borderWidth: '0.5em',
         borderColor: 'transparent',
-        borderTopColor: 'white',
+        borderTopColor: '#25A795',
         borderBottomWidth: 0,
         transform: [{
             translateX: '-50%'
@@ -61,11 +63,11 @@ const barLinks = [{
     logged: false
 }, {
     name: 'Register',
-    to: '/Register',
+    to: '/register',
     logged: false
 }, {
     name: 'About',
-    to: '/About'
+    to: '/about'
 }];
 
 function TopBar({activeRoute}) {
@@ -182,6 +184,7 @@ export default class App extends React.Component {
                         .bar {
                             top: 15px;
                             height: 10px;
+                            background-color: lightgrey;
                         }
                         .bar-1 {
                             margin: 0 20px;
