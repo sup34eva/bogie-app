@@ -37,36 +37,24 @@ export default class about extends React.Component {
         return (
             <View style={styles.about}>
                 <View style={styles.container}>
-                    <Text style={styles.title}>1.Installation</Text>
+                    <Text style={styles.title}>Qui sommes-nous ?</Text>
                     <Text>
-                        Avant de pouvoir utiliser l’application mobile Bogie, il faut commencer par la
-                        télécharger sur le Store de Google Play.
-                        Une fois le téléchargement terminé, il vous suffit de lancer l’application en
-                        cliquant sur l’icône.
+                        Nous sommes 4 étudiants en 3ème année d’école ingénieur informatique.
+                        Nous possédons grâce à notre cursus de multiple connaissance sur les nouvelles technologies.
+                        Passionné par le développement et essentiellement par le web, nous formons : The Rolling Stocks !
                     </Text>
 
-                    <Text style={styles.title}>2.Identification</Text>
+                    <Text style={styles.title}>Que proposons-nous ? </Text>
                     <Text>
-                        Une fois l’application lancée, la première étape est de s’identifier.
-                        Vous arrivez donc sur une page de login.
-                        Si vous êtes déjà inscrit, il vous suffit de renseigner votre email
-                        ainsi que votre mot de passe de connexion. Vous pouvez également
-                        vous connecter avec votre compte Facebook ou Google +.
-                        Si il s’agit de votre première visite, l’onglet ‘’Register’’ vous
-                        permet de créer un compte sur l’application. Pour vous inscrire,
-                         il vous est demander une adresse mail ainsi qu’un un mot de passe.
+                        Ce que nous proposons ? ça tiens en un seul mot : Bogie.
+                        Bogie c’est une application et un site web, qui vous permettent de gérer simplement vos trajets en trains.
                      </Text>
 
-                    <Text style={styles.title}>3.Page d’accueil</Text>
+                    <Text style={styles.title}>Comment nous contacter ?</Text>
                     <Text>
-                        Lorsque vous êtes connecté, vous avez accès à une page d’accueil
-                        Page d’accueil avec la liste des trains : possibilité de filtrer
-                        On peut ensuite sélectionner un trajet, le mettre dans notre panier
-                        Accès a un historique
-                        On peut consulter le panier à n’importe quel moment.
-                        Une fois la sélection terminée, on valide le panier puis on passe au payement.
-                        Possibilité d’imprimer les billets de train.
-                        Le payement est effectué par PayPal
+                        Nous contacter ? Rien d’aussi simple !
+                        Nous sommes à votre disposition à cette adresse mail : contact@bogie.leops.me.
+                        Pour toutes questions ou remarques, n’hésitez pas.
                     </Text>
                 </View>
             </View>

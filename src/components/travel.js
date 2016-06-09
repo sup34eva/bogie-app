@@ -11,6 +11,7 @@ import {
     browserHistory
 } from 'react-router';
 
+import Card from './base/card';
 import Button from './base/button';
 import Field from './base/field';
 import ListView from './base/listView';
@@ -120,13 +121,13 @@ class Travel extends React.Component {
     render() {
         if (this.props.viewer.start.edges.length !== 0 && this.props.viewer.end.edges.length !== 0) {
             return (
-                <View style={styles.container}>
+                <Card style={styles.container}>
                     <ListView dataSource={this.props.viewer.start.edges.concat([{node: {name: '...'}}]).concat(this.props.viewer.end.edges)}
                         renderRow={edge => <Text key={edge.node.id}>{edge.node.name}</Text>}/>
                     <Button style={styles.btn} onPress={this.reserve}>
                         <Text style={Button.Text}>Reserve</Text>
                     </Button>
-                </View>
+                </Card>
             );
         }
 
