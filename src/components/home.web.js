@@ -1,5 +1,4 @@
 import React from 'react';
-import Slider from 'react-slider';
 import Autosuggest from 'react-autosuggest';
 import Relay from 'react-relay';
 import moment from 'moment';
@@ -14,6 +13,7 @@ import {
 } from './base/field';
 import DatePicker from './base/datePicker';
 import Button from './base/button';
+import Slider from './base/slider';
 
 const styles = StyleSheet.create({
     container: {
@@ -34,20 +34,6 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row'
     },
-
-    range: {
-        flex: 2,
-        height: 50
-    },
-    rangeHandle: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'lightgrey',
-        borderColor: 'darkgrey',
-        borderWidth: 1,
-        borderStyle: 'solid'
-    },
     date: {
         marginRight: 30
     },
@@ -64,7 +50,7 @@ class AutoCompleteField extends React.Component {
         data: React.PropTypes.array,
         name: React.PropTypes.string,
         valueLink: React.PropTypes.shape({
-            value: React.PropTypes.string,
+            value: React.PropTypes.object,
             requestChange: React.PropTypes.func
         })
     };
@@ -124,7 +110,6 @@ class Home extends React.Component {
         super(props);
         this.state = {
             date: moment(),
-            range: [0, 96],
             submit: false
         };
         this.onSubmit = this.onSubmit.bind(this);
@@ -155,17 +140,6 @@ class Home extends React.Component {
                 this.setState({date});
             }
         };
-        const rangeLink = {
-            value: this.state.range,
-            requestChange: range => {
-                this.setState({range});
-            }
-        };
-
-        const rangeStyle = StyleSheet.resolve({style: styles.range});
-        const handleStyle = StyleSheet.resolve({style: styles.rangeHandle});
-        const hoursFrom = this.state.range[0] * 15;
-        const hoursTo = this.state.range[1] * 15;
 
         return (
             <View>
@@ -179,12 +153,7 @@ class Home extends React.Component {
                             <Text style={[fieldStyles.label, styles.dateLabel]}>Date</Text>
                             <DatePicker valueLink={dateLink}/>
                         </View>
-                        <View style={styles.range}>
-                            <Text style={fieldStyles.label}>Hours {Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
-                            <Slider onChange={rangeLink.requestChange} value={rangeLink.value} max={96} withBars
-                                className={rangeStyle.className} barClassName="bar"
-                                handleClassName={handleStyle.className} />
-                        </View>
+                        <Slider/>
                     </View>
                     <View style={styles.row}>
                         <Button style={styles.btn} onPress={this.onSubmit}>
