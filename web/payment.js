@@ -18,8 +18,8 @@ export function popup(req, res) {
         onFailure: transaction => {
             const err = transaction.getError();
             console.error('onFailure', err.message, err.stack);
-            res.status(500).end();
-            // TODO: Close popup
+            res.status(500).end(``);
+
         }
     });
 }

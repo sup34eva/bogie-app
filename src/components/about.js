@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     }
 });
 
-export default class about extends React.Component {
+export default class About extends React.Component {
     static propTypes = {
         onConnect: React.PropTypes.func,
         style: View.propTypes.style
