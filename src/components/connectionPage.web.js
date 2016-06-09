@@ -96,13 +96,10 @@ export default class ConnectionPage extends React.Component {
             );
 
             if (changed.length > 0) {
-                const state = changed.reduce((state, key) => {
+                this.setState(changed.reduce((state, key) => {
                     state[key] = rect[key] - bodyRect[key];
                     return state;
-                }, {});
-
-                console.log(bodyRect, rect, state);
-                this.setState(state);
+                }, {}));
             }
         }
     }
