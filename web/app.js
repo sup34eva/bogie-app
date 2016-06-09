@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
     topBar: {
         flexDirection: 'row',
         justifyContent: 'center',
-        boxShadow: '0 -1em 1em 1em rgba(0, 0, 0, 0.5)'
+        boxShadow: '0 -1em 1em 1em rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'white'
     },
     barLink: {
         padding: '1.25em',
@@ -164,6 +165,7 @@ export default class App extends React.Component {
                             font-weight: 300;
                             letter-spacing: 0.01em;
                             line-height: 1.6;
+                            background-color: rgba(0, 0, 0, 0.025);
                         }
 
                         *,

@@ -10,8 +10,14 @@ import Field from './base/field';
 
 const styles = StyleSheet.create({
     container: {
-        padding: '8.25em',
-        backgroundSize: 'cover'
+        padding: '2em',
+        maxWidth: '75vw',
+        marginTop: '3em',
+        marginRight: 'auto',
+        marginBottom: '3em',
+        marginLeft: 'auto',
+        boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.5)',
+        borderRadius: 2
     },
     input: {
         flex: 1
