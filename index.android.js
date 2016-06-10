@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 import ConnectionPage from './src/components/connectionPage';
-import ListContainer from './src/components/routes/listRoute';
+import HomePage from './src/components/home';
 
 const styles = StyleSheet.create({
     container: {
@@ -103,8 +103,8 @@ class App extends React.Component {
 
         if (this.refs.navigator) {
             this.refs.navigator.replace({
-                title: 'Trains List',
-                component: ListContainer,
+                title: 'Search',
+                component: HomePage,
                 passProps: {
                     token
                 }

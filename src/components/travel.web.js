@@ -4,12 +4,16 @@ import cookie from 'react-cookie';
 import {
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    Portal
 } from 'react-native';
-
+import {
+    browserHistory
+} from 'react-router';
 import moment from 'moment';
 import Card from './base/card';
 import Button from './base/button';
+import Field from './base/field';
 import ListView from './base/listView';
 
 const styles = StyleSheet.create({
@@ -67,6 +71,54 @@ const styles = StyleSheet.create({
     }
 });
 
+class Modal extends React.Component {
+    static propTypes = {
+        tag: React.PropTypes.string,
+        onPay: React.PropTypes.func,
+        onClose: React.PropTypes.func
+    };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: ''
+        };
+    }
+
+    render() {
+        const emailLink = {
+            value: this.state.email,
+            requestChange: email => {
+                console.log(email);
+                this.setState({
+                    email
+                });
+            }
+        };
+
+        return (
+            <View style={styles.backdrop}>
+                <View style={styles.modal}>
+                    <Button style={styles.exit} onPress={this.props.onClose}>
+                        <Text style={Button.Text}>X</Text>
+                    </Button>
+                    <Text style={styles.text}>Enter your mail for reserve</Text>
+                    <Field type="email" name="Email" valueLink={emailLink} />
+                    <Button style={styles.btn} onPress={() => {
+                        browserHistory.push('/login');
+                        Portal.closeModal(this.props.tag);
+                    }}>
+                        <Text style={Button.Text}>Log in</Text>
+                    </Button>
+                    <Button style={styles.btn} onPress={this.props.onPay} disabled={this.state.email === ''}>
+                        <Text style={Button.Text}>Pay</Text>
+                    </Button>
+                </View>
+            </View>
+        );
+    }
+}
+
 class Travel extends React.Component {
     static propTypes = {
         train: React.PropTypes.object
@@ -82,12 +134,17 @@ class Travel extends React.Component {
         if (cookie.load('token')) {
             this.pay();
         } else {
-            // Show Modal
+            const tag = Portal.allocateTag();
+            Portal.showModal(tag, <Modal tag={tag} onClose={() => Portal.closeModal(tag)} onPay={this.pay} key={tag}/>);
         }
     }
 
     pay() {
-        // Open popup
+        const win = window.open('/payment/popup', 'modal');
+        window.onPayment = err => {
+            console.error(err);
+            win.close();
+        };
     }
 
     render() {
@@ -108,9 +165,9 @@ class Travel extends React.Component {
                             <Text>Date : {dateFormatted}</Text>
                         </View>
                     </View>
-                    <Button style={styles.btn} onPress={this.reserve}>
-                        <Text style={Button.Text}>Reserve</Text>
-                    </Button>
+                        <Button style={styles.btn} onPress={this.reserve}>
+                            <Text style={Button.Text}>Reserve</Text>
+                        </Button>
                 </Card>
             );
         }

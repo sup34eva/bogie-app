@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import ConnectionPage from './src/components/connectionPage';
-import TrainList from './src/components/trainList';
+import HomePage from './src/components/home';
 
 const styles = StyleSheet.create({
     container: {
@@ -35,8 +35,8 @@ class App extends React.Component {
     setToken(token) {
         if (this.refs.navigator) {
             this.refs.navigator.replace({
-                title: 'Trains List',
-                component: TrainList,
+                title: 'Search',
+                component: HomePage,
                 passProps: {
                     token
                 }

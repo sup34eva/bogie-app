@@ -1,51 +1,27 @@
 import React from 'react';
 import Relay from 'react-relay';
 import moment from 'moment';
-import DatePicker from './base/datePicker';
 import {
     View,
     Text,
     StyleSheet
 } from 'react-native';
 
-import {
-    styles as fieldStyles
-} from './base/field';
 import Travel from './travel';
 import Card from './base/card';
 import Button from './base/button';
-import Slider from './base/slider';
-import AutoCompleteField from './base/autoComplete';
-
-const cdnUrl = `${process.env.CDN_URL}${(process.env.HEROKU_SLUG_COMMIT ? `/${process.env.HEROKU_SLUG_COMMIT}` : '')}`;
+import Field from './base/field';
 
 const styles = StyleSheet.create({
-    date: {
-        marginRight: 30
-    },
-    dateLabel: {
-        marginBottom: '1.25rem'
-    },
     container: {
-        width: '75vw',
-        marginTop: '3em',
-        marginRight: 'auto',
-        marginLeft: 'auto'
-    },
-    h1: {
-        color: 'white'
+        flexDirection: 'column'
     },
     row: {
         flexDirection: 'row'
     },
-    btn: {
+    field: {
         flex: 1,
-        marginTop: '2em'
-    },
-    image: {
-        backgroundImage: `url('${cdnUrl}/about.jpg')`,
-        backgroundSize: 'cover',
-        flex: 1
+        marginTop: '8'
     }
 });
 
@@ -61,8 +37,9 @@ class Home extends React.Component {
         this.state = {
             departure: '',
             arrival: '',
-            date: moment(),
-            range: [0, 96]
+            date: moment().toISOString(),
+            after: 0,
+            before: 96
         };
     }
 
@@ -70,9 +47,9 @@ class Home extends React.Component {
         this.props.relay.setVariables({
             departure: this.state.departure,
             arrival: this.state.arrival,
-            date: this.state.date.toISOString(),
-            after: this.state.range[0],
-            before: this.state.range[1]
+            date: this.state.date,
+            after: this.state.after,
+            before: this.state.before
         });
     }
 
@@ -95,29 +72,33 @@ class Home extends React.Component {
                 this.setState({date});
             }
         };
-        const rangeLink = {
-            value: this.state.range,
-            requestChange: range => {
-                this.setState({range});
+        const beforeLink = {
+            value: this.state.before,
+            requestChange: before => {
+                this.setState({before});
+            }
+        };
+        const afterLink = {
+            value: this.state.after,
+            requestChange: after => {
+                this.setState({after});
             }
         };
 
         return (
-            <View style={styles.image}>
+            <View style={styles.container}>
                 <Card style={styles.container}>
                     <View style={styles.row}>
-                        <AutoCompleteField name="Departure" valueLink={departureLink} viewer={this.props.viewer} />
-                        <AutoCompleteField name="Arrival" valueLink={arrivalLink} viewer={this.props.viewer} />
+                        <Field name="Departure" style={styles.field} valueLink={departureLink} />
+                        <Field name="Arrival" style={styles.field} valueLink={arrivalLink} />
                     </View>
                     <View style={styles.row}>
-                        <View style={styles.date}>
-                            <Text style={[fieldStyles.label, styles.dateLabel]}>Date</Text>
-                            <DatePicker valueLink={dateLink} />
-                        </View>
-                        <Slider valueLink={rangeLink} />
+                        <Field name="Date" style={styles.field} valueLink={dateLink} />
+                        <Field name="Before" style={styles.field} valueLink={beforeLink} />
+                        <Field name="After" style={styles.field} valueLink={afterLink} />
                     </View>
                     <View style={styles.row}>
-                        <Button style={styles.btn} onPress={this.onSubmit}>
+                        <Button style={styles.field} onPress={this.onSubmit}>
                             <Text style={Button.Text}>Search</Text>
                         </Button>
                     </View>
@@ -132,15 +113,13 @@ export default Relay.createContainer(Home, {
     initialVariables: {
         departure: '',
         arrival: '',
-        date: (new Date()).toISOString(),
+        date: moment().toISOString(),
         after: 0,
         before: 96
     },
     fragments: {
         viewer: () => Relay.QL`
             fragment on Viewer {
-                ${AutoCompleteField.getFragment('viewer')}
-                ${AutoCompleteField.getFragment('viewer')}
                 train(from: $departure, to: $arrival, date: $date, after: $after, before: $before) {
                     id
                     ${Travel.getFragment('train')}

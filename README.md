@@ -28,3 +28,9 @@ fichier `package.json` contient une configuration qui lance une compilation
 après l'installation des dépendances, et le serveur utilise ensuite le fichier
 `Procfile` pour démarrer l'application (ici un seul processus est lancé, un
 serveur web utilsant le fichier `dist/web.js`).
+
+# Connections par les réseaux sociaux
+Pour que la connection par Facebook ou Google fonctionne, des ID client
+correspondant a une application sont nécéssaires. Les applications Bogie n'étant
+pas publiques, il peut être nécéssaire de créer de nouvelles applications pour
+pouvoir tester le projet.

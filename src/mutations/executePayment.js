@@ -21,7 +21,7 @@ export default class ExecutePaymentMutation extends Relay.Mutation {
     getFatQuery() {
         return Relay.QL`
             fragment on ExecutePaymentPayload {
-                payment
+                receipt
             }
         `;
     }
@@ -32,7 +32,7 @@ export default class ExecutePaymentMutation extends Relay.Mutation {
             children: [
                 Relay.QL`
                     fragment on ExecutePaymentPayload {
-                        payment
+                        receipt
                     }
                 `
             ]

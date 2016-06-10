@@ -26,34 +26,25 @@ const styles = StyleSheet.create({
     }
 });
 
-export default class Slider extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            range: [0, 96]
-        };
-    }
+export default function Slider({valueLink: {value, requestChange}}) {
+    const rangeStyle = StyleSheet.resolve({style: styles.range});
+    const handleStyle = StyleSheet.resolve({style: styles.rangeHandle});
+    const hoursFrom = value[0] * 15;
+    const hoursTo = value[1] * 15;
 
-    render() {
-        const rangeLink = {
-            value: this.state.range,
-            requestChange: range => {
-                this.setState({range});
-            }
-        };
-
-        const rangeStyle = StyleSheet.resolve({style: styles.range});
-        const handleStyle = StyleSheet.resolve({style: styles.rangeHandle});
-        const hoursFrom = this.state.range[0] * 15;
-        const hoursTo = this.state.range[1] * 15;
-
-        return (
-            <View style={styles.range}>
-                <Text style={fieldStyles.label}>Hours {Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
-                <Slide onChange={rangeLink.requestChange} value={rangeLink.value} max={96} withBars
-                    className={rangeStyle.className} barClassName="bar"
+    return (
+        <View style={styles.range}>
+            <Text style={fieldStyles.label}>Hours {Math.floor(hoursFrom / 60)}:{hoursFrom % 60} - {Math.floor(hoursTo / 60)}:{hoursTo % 60}</Text>
+            <Slide onChange={requestChange} value={value} max={96} withBars
+                className={rangeStyle.className} barClassName="bar"
                 handleClassName={handleStyle.className} />
-            </View>
-        );
-    }
+        </View>
+    );
 }
+
+Slider.propTypes = {
+    valueLink: React.PropTypes.shape({
+        value: React.PropTypes.arrayOf(React.PropTypes.number),
+        requestChange: React.PropTypes.func
+    })
+};

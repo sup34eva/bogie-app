@@ -1,17 +1,32 @@
 import React from 'react';
+import Relay from 'react-relay';
+import cookie from 'react-cookie';
 import {
+    StyleSheet,
+    Platform,
     View,
     Text
 } from 'react-native';
-import Relay from 'react-relay';
+
+import Card from './base/card';
 import Field from './base/field';
 import Button from './base/button';
 import ListView from './base/listView';
-import cookie from 'react-cookie';
-
 
 import EditMail from '../mutations/editMail';
 import EditPassword from '../mutations/editPassword';
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'column',
+        width: Platform.OS === 'web' ? '75vw' : undefined,
+        margin: 'auto'
+    },
+    card: {
+        marginTop: '0.5em',
+        marginBottom: '0.5em'
+    }
+});
 
 class Profile extends React.Component {
     static propTypes = {
@@ -113,21 +128,21 @@ class Profile extends React.Component {
         };
 
         return (
-            <View>
-                <View>
+            <View style={styles.container}>
+                <Card style={styles.card}>
                     <Field type="email" name="Email" valueLink={emailLink} />
                     <Field type="password" name="Current Password" valueLink={currentPassword} />
                     <Field type="password" name="Password" valueLink={passwordLink} />
                     <Field type="password" name="Password Confirmation" valueLink={passwordConfLink} />
                     {this.state.error && <Text>{this.state.error}</Text>}
                     <Button onPress={this.onSubmit}>
-                        <Text>Submit</Text>
+                        <Text style={Button.Text}>Submit</Text>
                     </Button>
-                </View>
-                <View>
+                </Card>
+                <Card style={styles.card}>
                     <Text>Historique de la commande</Text>
                     <ListView dataSource={this.props.viewer.me.history.edges} renderRow={edge => <Text> key={edge.node.id} history={edge.node}</Text>}/>
-                </View>
+                </Card>
             </View>
         );
     }
